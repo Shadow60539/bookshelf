@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -6,6 +7,10 @@ import 'package:flutter_app/global/strings.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 
 class LoginPage extends StatelessWidget {
+  final _auth = FirebaseAuth.instance;
+  String email;
+  String password;
+
   @override
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.bodyText2;
@@ -66,8 +71,19 @@ class LoginPage extends StatelessWidget {
                       ),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50)),
-                      onPressed: () => Navigator.pushReplacementNamed(
-                          context, Router.homePage),
+                      onPressed: () async {
+                        try {
+                          final newUser =
+                              await _auth.createUserWithEmailAndPassword(
+                                  email: email, password: password);
+                          if (newUser != null) {
+                            Navigator.pushReplacementNamed(
+                                context, Router.homePage);
+                          }
+                        } catch (e) {
+                          print(e);
+                        }
+                      },
                       color: kDarkBlue,
                     ),
                   ),
@@ -123,9 +139,14 @@ class LoginPage extends StatelessWidget {
                 ),
                 Flexible(
                   child: TextFormField(
+                    keyboardType: TextInputType.emailAddress,
+                    style: TextStyle(color: Colors.black),
                     scrollPadding: padding,
                     decoration: _textFieldDecoration(label: 'Email'),
                     autocorrect: false,
+                    onChanged: (value) {
+                      email = value;
+                    },
                   ),
                 ),
               ],
@@ -174,8 +195,13 @@ class LoginPage extends StatelessWidget {
                 Flexible(
                   child: TextFormField(
                     scrollPadding: padding,
+                    style: TextStyle(color: Colors.black),
+                    obscureText: true,
                     decoration: _textFieldDecoration(label: 'Password'),
                     autocorrect: false,
+                    onChanged: (value) {
+                      password = value;
+                    },
                   ),
                 ),
               ],
