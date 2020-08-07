@@ -4,12 +4,12 @@
 // AutoRouteGenerator
 // **************************************************************************
 
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter_app/features/splash/presentation/pages/splash_page.dart';
-import 'package:flutter_app/features/login/presentation/pages/login_page.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_app/features/home/presentation/pages/home_page.dart';
+import 'package:flutter_app/features/login/presentation/pages/sign_up_page.dart';
+import 'package:flutter_app/features/splash/presentation/pages/splash_page.dart';
 
 class Router {
   static const splashPage = '/';
@@ -26,7 +26,7 @@ class Router {
         );
       case Router.loginPage:
         return MaterialPageRoute<dynamic>(
-          builder: (_) => LoginPage(),
+          builder: (_) => SignUpPage(),
           settings: settings,
         );
       case Router.homePage:

@@ -6,10 +6,11 @@ import 'package:flutter_app/global/colors.dart';
 import 'package:flutter_app/global/strings.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 
-class LoginPage extends StatelessWidget {
+String email;
+String password;
+
+class SignUpPage extends StatelessWidget {
   final _auth = FirebaseAuth.instance;
-  String email;
-  String password;
 
   @override
   Widget build(BuildContext context) {
