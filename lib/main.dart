@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/global/colors.dart';
+import 'package:flutter_app/core/colors.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 
 void main() {
@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: Router.homePage,
+      initialRoute: Router.indexPage,
       onGenerateRoute: Router.onGenerateRoute,
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',

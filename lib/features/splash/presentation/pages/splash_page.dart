@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/global/colors.dart';
+import 'package:flutter_app/core/colors.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 
 class SplashPage extends StatefulWidget {
@@ -31,7 +31,7 @@ class _SplashPageState extends State<SplashPage>
         bottomNavigationBar: _bottomText(context, style),
         body: GestureDetector(
           onTap: () =>
-              Navigator.pushReplacementNamed(context, Router.loginPage),
+              Navigator.pushReplacementNamed(context, Router.signUpPage),
           child: Container(
             decoration: _decoration(),
             alignment: Alignment.center,
@@ -98,7 +98,8 @@ class _SplashPageState extends State<SplashPage>
                         AnimationStatus.completed) {
                       await _auth.signInWithEmailAndPassword(
                           email: email, password: password);
-                      Navigator.pushReplacementNamed(context, Router.homePage);
+                      Navigator.pushReplacementNamed(
+                          context, Router.discoverPage);
                     } else {
                       _animationController.forward();
                     }
@@ -123,8 +124,8 @@ class _SplashPageState extends State<SplashPage>
                   ),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5)),
-                  onPressed: () =>
-                      Navigator.pushReplacementNamed(context, Router.loginPage),
+                  onPressed: () => Navigator.pushReplacementNamed(
+                      context, Router.signUpPage),
                 )),
             SizedBox(
               height: 50,

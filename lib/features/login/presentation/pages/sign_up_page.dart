@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_app/global/colors.dart';
-import 'package:flutter_app/global/strings.dart';
+import 'package:flutter_app/core/colors.dart';
+import 'package:flutter_app/core/strings.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 
 String email;
@@ -79,7 +79,7 @@ class SignUpPage extends StatelessWidget {
                                   email: email, password: password);
                           if (newUser != null) {
                             Navigator.pushReplacementNamed(
-                                context, Router.homePage);
+                                context, Router.discoverPage);
                           }
                         } catch (e) {
                           print(e);
