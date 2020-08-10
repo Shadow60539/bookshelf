@@ -166,7 +166,13 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
         builder: (BuildContext context, AsyncSnapshot<List<Book>> books) {
           if (books.connectionState == ConnectionState.done) {
             if (books.hasError) {
-              return Text(books.error);
+              return Center(
+                child: Text(
+                  '${books.error.toString()}',
+                  style: style.copyWith(color: Colors.white, fontSize: 20),
+                  textAlign: TextAlign.center,
+                ),
+              );
             } else {
               return ValueListenableBuilder(
                 builder: (BuildContext context, value, Widget child) {

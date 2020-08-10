@@ -122,7 +122,8 @@ class ReadBooksBuilder extends StatelessWidget {
                           ],
                           onPressed: () => Navigator.pushNamed(
                               context, Router.bookPage,
-                              arguments: book),
+                              arguments: BookPageArguments(
+                                  book: book, fromLibrary: true)),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Column(

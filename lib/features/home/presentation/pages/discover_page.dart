@@ -158,7 +158,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
                         )),
                   ],
                   onPressed: () => Navigator.pushNamed(context, Router.bookPage,
-                      arguments: books[index]),
+                      arguments: BookPageArguments(
+                          book: books[index], fromLibrary: false)),
                   child: Hero(
                     tag: books[index].imgUrl,
                     child: FittedBox(
@@ -360,7 +361,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
         builder: (BuildContext context, AsyncSnapshot<List<Book>> books) {
           if (books.connectionState == ConnectionState.done) {
             if (books.hasError) {
-              return Text(books.error);
+              return Center(
+                child: Text(
+                  '${books.error}',
+                  style: style.copyWith(color: kDarkBlue, fontSize: 20),
+                  textAlign: TextAlign.center,
+                ),
+              );
             } else {
               return Scaffold(
                 body: SingleChildScrollView(

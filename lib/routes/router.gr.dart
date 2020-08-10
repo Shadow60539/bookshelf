@@ -63,16 +63,28 @@ class Router {
           settings: settings,
         );
       case Router.bookPage:
-        if (hasInvalidArgs<Book>(args, isRequired: true)) {
-          return misTypedArgsRoute<Book>(args);
+        if (hasInvalidArgs<BookPageArguments>(args, isRequired: true)) {
+          return misTypedArgsRoute<BookPageArguments>(args);
         }
-        final typedArgs = args as Book;
+        final typedArgs = args as BookPageArguments;
         return MaterialPageRoute<dynamic>(
-          builder: (_) => BookPage(book: typedArgs),
+          builder: (_) => BookPage(
+              book: typedArgs.book, fromLibrary: typedArgs.fromLibrary),
           settings: settings,
         );
       default:
         return unknownRoutePage(settings.name);
     }
   }
+}
+
+//**************************************************************************
+// Arguments holder classes
+//***************************************************************************
+
+//BookPage arguments holder class
+class BookPageArguments {
+  final Book book;
+  final bool fromLibrary;
+  BookPageArguments({@required this.book, this.fromLibrary = false});
 }
