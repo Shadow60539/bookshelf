@@ -51,15 +51,22 @@ class _DiscoverPageState extends State<DiscoverPage> {
     );
   }
 
-  Positioned userDp() {
+  Widget userDp() {
     return Positioned(
-      child: CircleAvatar(
-        radius: 30,
-        backgroundColor: kDarkBlue,
-        child: Icon(
-          Icons.person,
-          color: CupertinoColors.white,
-        ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          CircleAvatar(
+            radius: 21,
+            backgroundColor: kDarkBlue,
+          ),
+          CircleAvatar(
+            radius: 20,
+            backgroundImage: NetworkImage(
+              dpUrl,
+            ),
+          ),
+        ],
       ),
       top: 20,
       right: 20,
@@ -371,6 +378,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
             } else {
               return Scaffold(
                 body: SingleChildScrollView(
+                  key: PageStorageKey(1),
                   padding: EdgeInsets.only(bottom: 20),
                   child: Stack(
                     children: <Widget>[

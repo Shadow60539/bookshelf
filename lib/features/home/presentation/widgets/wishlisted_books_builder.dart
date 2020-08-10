@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/core/colors.dart';
 import 'package:flutter_app/core/dimens.dart';
 import 'package:flutter_app/core/model/book.dart';
 import 'package:flutter_app/routes/router.gr.dart';
@@ -30,19 +29,9 @@ class WishListedBooksBuilder extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  'Wishlisted',
-                  style: style.copyWith(
-                      fontSize: 30, color: CupertinoColors.black),
-                ),
-                Text(
-                  'see all',
-                  style: style.copyWith(color: kDarkBlue),
-                )
-              ],
+            Text(
+              'Wishlisted',
+              style: style.copyWith(fontSize: 30, color: CupertinoColors.black),
             ),
             SizedBox(
               height: 10,

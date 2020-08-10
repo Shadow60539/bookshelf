@@ -29,19 +29,9 @@ class ReadingBooksBuilder extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  'Continue Reading',
-                  style: style.copyWith(
-                      fontSize: 30, color: CupertinoColors.black),
-                ),
-                Text(
-                  'see all',
-                  style: style.copyWith(color: kDarkBlue),
-                )
-              ],
+            Text(
+              'Continue Reading',
+              style: style.copyWith(fontSize: 30, color: CupertinoColors.black),
             ),
             SizedBox(
               height: 10,

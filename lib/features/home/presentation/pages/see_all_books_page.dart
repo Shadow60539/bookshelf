@@ -108,7 +108,7 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
             )),
       ],
       onPressed: () => Navigator.pushNamed(context, Router.bookPage,
-          arguments: books[index]),
+          arguments: BookPageArguments(book: books[index], fromLibrary: false)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Hero(
