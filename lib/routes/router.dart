@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route_annotations.dart';
+import 'package:flutter_app/features/home/presentation/pages/book_page.dart';
 import 'package:flutter_app/features/home/presentation/pages/discover_page.dart';
 import 'package:flutter_app/features/home/presentation/pages/index_page.dart';
 import 'package:flutter_app/features/home/presentation/pages/see_all_books_page.dart';
@@ -15,4 +16,5 @@ class $Router {
   DiscoverPage discoverPage;
   SettingsPage settingsPage;
   SeeAllBooksPage seeAllBooksPage;
+  BookPage bookPage;
 }

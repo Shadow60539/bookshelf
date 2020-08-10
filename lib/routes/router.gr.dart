@@ -13,6 +13,8 @@ import 'package:flutter_app/features/home/presentation/pages/index_page.dart';
 import 'package:flutter_app/features/home/presentation/pages/discover_page.dart';
 import 'package:flutter_app/features/home/presentation/pages/settings_page.dart';
 import 'package:flutter_app/features/home/presentation/pages/see_all_books_page.dart';
+import 'package:flutter_app/features/home/presentation/pages/book_page.dart';
+import 'package:flutter_app/core/model/book.dart';
 
 class Router {
   static const splashPage = '/';
@@ -21,6 +23,7 @@ class Router {
   static const discoverPage = '/discover-page';
   static const settingsPage = '/settings-page';
   static const seeAllBooksPage = '/see-all-books-page';
+  static const bookPage = '/book-page';
   static final navigator = ExtendedNavigator();
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
@@ -57,6 +60,15 @@ class Router {
         final typedArgs = args as int ?? 0;
         return MaterialPageRoute<dynamic>(
           builder: (_) => SeeAllBooksPage(category: typedArgs),
+          settings: settings,
+        );
+      case Router.bookPage:
+        if (hasInvalidArgs<Book>(args, isRequired: true)) {
+          return misTypedArgsRoute<Book>(args);
+        }
+        final typedArgs = args as Book;
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => BookPage(book: typedArgs),
           settings: settings,
         );
       default:

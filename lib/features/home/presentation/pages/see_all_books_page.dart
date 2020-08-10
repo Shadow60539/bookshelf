@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/core/colors.dart';
 import 'package:flutter_app/core/model/book.dart';
 import 'package:flutter_app/core/strings.dart';
+import 'package:flutter_app/routes/router.gr.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
@@ -29,6 +30,12 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
     _currentTab = ValueNotifier<int>(widget.category);
     _tabController =
         TabController(length: 10, vsync: this, initialIndex: widget.category);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   Widget categoryBuilder({@required int selectedIndex, String title}) {
@@ -100,15 +107,17 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
               size: 16,
             )),
       ],
-      onPressed: () {
-        print('pressed');
-      },
+      onPressed: () => Navigator.pushNamed(context, Router.bookPage,
+          arguments: books[index]),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        child: Image.network(
-          books[index].imgUrl,
-          height: 140,
-          width: 100,
+        child: Hero(
+          tag: books[index].imgUrl,
+          child: Image.network(
+            books[index].imgUrl,
+            height: 140,
+            width: 100,
+          ),
         ),
       ),
     );
@@ -135,9 +144,14 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
     var data = jsonDecode(response.body);
     data['items'].forEach((data) {
       Book book = Book(
-          title: data['volumeInfo']['title'],
-          imgUrl: data['volumeInfo']['imageLinks']['thumbnail'],
-          author: data['volumeInfo']['authors'][0]);
+        title: data['volumeInfo']['title'],
+        imgUrl: data['volumeInfo']['imageLinks']['thumbnail'],
+        author: data['volumeInfo']['authors'][0],
+        desc: data['volumeInfo']['description'],
+        category: data['volumeInfo']['categories'][0],
+        language: data['volumeInfo']['language'],
+        pages: data['volumeInfo']['pageCount'],
+      );
       books.add(book);
     });
     return books;
