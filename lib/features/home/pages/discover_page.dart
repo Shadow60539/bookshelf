@@ -5,6 +5,8 @@ import 'package:flutter_app/core/model/book.dart';
 import 'package:flutter_app/core/network/http_get_books.dart';
 import 'package:flutter_app/core/utils/colors.dart';
 import 'package:flutter_app/core/utils/strings.dart';
+import 'package:flutter_app/core/widgets/error_state.dart';
+import 'package:flutter_app/core/widgets/loading_widget.dart';
 import 'package:flutter_app/features/home/widgets/new_books_builder.dart';
 import 'package:flutter_app/features/home/widgets/read_books_builder.dart';
 import 'package:flutter_app/features/home/widgets/reading_books_builder.dart';
@@ -185,26 +187,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
         builder: (BuildContext context, AsyncSnapshot<List<Book>> books) {
           if (books.connectionState == ConnectionState.done) {
             if (books.hasError) {
-              return Scaffold(
-                backgroundColor: CupertinoColors.white,
-                body: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Image.asset(
-                        'assets/error_state/error.png',
-                        height: 150,
-                        fit: BoxFit.fitHeight,
-                      ),
-                      Text(
-                        'Oops something went wrong',
-                        style:
-                            style.copyWith(color: Colors.black26, fontSize: 12),
-                      )
-                    ],
-                  ),
-                ),
-              );
+              return ErrorStateBuilder();
             } else {
               return Scaffold(
                 key: _scaffoldKey,
@@ -231,15 +214,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
               );
             }
           } else
-            return Center(
-              child: Text(
-                'loading..',
-                style: style.copyWith(
-                    color: kDarkBlue,
-                    fontWeight: FontWeight.w100,
-                    fontSize: 20),
-              ),
-            );
+            return LoadingStateBuilder();
         },
       ),
     );

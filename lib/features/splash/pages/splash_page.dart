@@ -148,7 +148,10 @@ class _SplashPageState extends State<SplashPage>
             ),
             Text(
               'Powered by None.',
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  .copyWith(color: Colors.white),
               textAlign: TextAlign.center,
             ),
           ],
@@ -177,10 +180,14 @@ class _SplashPageState extends State<SplashPage>
         children: <Widget>[
           Text(
             'Book',
-            style: style.copyWith(fontWeight: FontWeight.w900, fontSize: 30),
+            style: style.copyWith(
+                fontWeight: FontWeight.w900, fontSize: 30, color: Colors.white),
           ),
           Text('shelf',
-              style: style.copyWith(fontWeight: FontWeight.w100, fontSize: 25))
+              style: style.copyWith(
+                  fontWeight: FontWeight.w100,
+                  fontSize: 25,
+                  color: Colors.white))
         ],
       ),
     );

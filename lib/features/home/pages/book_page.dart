@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,19 +15,26 @@ class BookPage extends StatefulWidget {
   _BookPageState createState() => _BookPageState();
 }
 
-class _BookPageState extends State<BookPage>
-    with SingleTickerProviderStateMixin {
+class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TabController _tabController;
+  AnimationController _animationController;
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
+    _animationController = AnimationController(
+        vsync: this,
+        lowerBound: 0.09,
+        upperBound: 0.1,
+        duration: Duration(milliseconds: 600))
+      ..forward();
     super.initState();
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -501,22 +510,34 @@ class _BookPageState extends State<BookPage>
               top: -2,
               child: Hero(
                 tag: widget.book.imgUrl,
-                child: Container(
-                  height: 200,
-                  width: 150,
-                  decoration: BoxDecoration(boxShadow: [
-                    BoxShadow(
-                        color: Colors.black12,
-                        spreadRadius: 1,
-                        blurRadius: 20,
-                        offset: Offset(0, 20))
-                  ]),
-                  child: Image.network(
-                    widget.book.imgUrl,
-                    height: 200,
-                    width: 150,
-                  ),
-                ),
+                child: AnimatedBuilder(
+                    builder: (BuildContext context, Widget child) {
+                      return Transform(
+                        transform: Matrix4.identity()
+                          ..setEntry(3, 2, 0.0006)
+                          ..rotateY(pi / _animationController.value),
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          height: 200,
+                          width: 150,
+                          decoration: BoxDecoration(boxShadow: [
+                            BoxShadow(
+                                color: Colors.black12,
+                                spreadRadius: 1,
+                                blurRadius: 20,
+                                offset:
+                                    Offset(0, 200 * _animationController.value))
+                          ]),
+                          child: Image.network(
+                            widget.book.imgUrl,
+                            height: 200,
+                            width: 150,
+                          ),
+                        ),
+                      );
+                    },
+                    animation: CurvedAnimation(
+                        parent: _animationController, curve: Curves.easeOut)),
               ),
             )
           ],

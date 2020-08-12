@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/core/model/book.dart';
 import 'package:flutter_app/core/network/http_get_books.dart';
 import 'package:flutter_app/core/utils/colors.dart';
+import 'package:flutter_app/core/widgets/error_state.dart';
+import 'package:flutter_app/core/widgets/loading_widget.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:focused_menu/focused_menu.dart';
@@ -38,18 +40,12 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
     super.dispose();
   }
 
-  Widget categoryBuilder({@required int selectedIndex, String title}) {
+  Widget categoryBuilder(
+      {@required int selectedIndex, String title, TextStyle style}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Text(
         title,
-        style: TextStyle(
-            color: _currentTab.value == selectedIndex
-                ? Colors.black
-                : Colors.black26,
-            fontWeight:
-                _currentTab.value == selectedIndex ? FontWeight.w600 : null,
-            fontSize: 16),
       ),
     );
   }
@@ -141,26 +137,7 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
         builder: (BuildContext context, AsyncSnapshot<List<Book>> books) {
           if (books.connectionState == ConnectionState.done) {
             if (books.hasError) {
-              return Scaffold(
-                backgroundColor: CupertinoColors.white,
-                body: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Image.asset(
-                        'assets/error_state/error.png',
-                        height: 150,
-                        fit: BoxFit.fitHeight,
-                      ),
-                      Text(
-                        'Oops something went wrong',
-                        style:
-                            style.copyWith(color: Colors.black26, fontSize: 12),
-                      )
-                    ],
-                  ),
-                ),
-              );
+              return ErrorStateBuilder();
             } else {
               return ValueListenableBuilder(
                 builder: (BuildContext context, value, Widget child) {
@@ -184,24 +161,56 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
                             _currentTab.value = index;
                           },
                           isScrollable: true,
-                          labelColor: kDarkBlue,
+                          labelStyle:
+                              style.copyWith(fontWeight: FontWeight.w600),
+                          unselectedLabelStyle:
+                              style.copyWith(fontWeight: null),
+                          labelColor: Colors.black,
+                          unselectedLabelColor: Colors.black26,
                           indicatorColor: kDarkBlue,
                           indicatorSize: TabBarIndicatorSize.label,
                           indicatorWeight: 4,
                           tabs: [
-                            categoryBuilder(selectedIndex: 0, title: 'Fiction'),
-                            categoryBuilder(selectedIndex: 1, title: 'Poetry'),
-                            categoryBuilder(selectedIndex: 2, title: 'Design'),
-                            categoryBuilder(selectedIndex: 3, title: 'Cooking'),
-                            categoryBuilder(selectedIndex: 4, title: 'Nature'),
                             categoryBuilder(
-                                selectedIndex: 5, title: 'Philosophy'),
+                                selectedIndex: 0,
+                                title: 'Fiction',
+                                style: style),
                             categoryBuilder(
-                                selectedIndex: 6, title: 'Education'),
-                            categoryBuilder(selectedIndex: 7, title: 'Comics'),
-                            categoryBuilder(selectedIndex: 8, title: 'Health'),
+                                selectedIndex: 1,
+                                title: 'Poetry',
+                                style: style),
                             categoryBuilder(
-                                selectedIndex: 9, title: 'Business'),
+                                selectedIndex: 2,
+                                title: 'Design',
+                                style: style),
+                            categoryBuilder(
+                                selectedIndex: 3,
+                                title: 'Cooking',
+                                style: style),
+                            categoryBuilder(
+                                selectedIndex: 4,
+                                title: 'Nature',
+                                style: style),
+                            categoryBuilder(
+                                selectedIndex: 5,
+                                title: 'Philosophy',
+                                style: style),
+                            categoryBuilder(
+                                selectedIndex: 6,
+                                title: 'Education',
+                                style: style),
+                            categoryBuilder(
+                                selectedIndex: 7,
+                                title: 'Comics',
+                                style: style),
+                            categoryBuilder(
+                                selectedIndex: 8,
+                                title: 'Health',
+                                style: style),
+                            categoryBuilder(
+                                selectedIndex: 9,
+                                title: 'Business',
+                                style: style),
                           ],
                         ),
                         Expanded(
@@ -225,7 +234,6 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
                               Expanded(
                                 child: TabBarView(
                                   controller: _tabController,
-                                  physics: NeverScrollableScrollPhysics(),
                                   children: <Widget>[
                                     tabBody(books: books.data, style: style),
                                     tabBody(books: books.data, style: style),
@@ -251,17 +259,7 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
               );
             }
           } else
-            return Scaffold(
-              body: Center(
-                child: Text(
-                  'loading..',
-                  style: style.copyWith(
-                      color: kDarkBlue,
-                      fontWeight: FontWeight.w100,
-                      fontSize: 20),
-                ),
-              ),
-            );
+            return LoadingStateBuilder();
         },
       ),
     );
