@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/core/model/book.dart';
 import 'package:flutter_app/core/utils/dimens.dart';
+import 'package:flutter_app/core/utils/strings.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
@@ -76,7 +77,7 @@ class ReadBooksBuilder extends StatelessWidget {
                                 ),
                                 onPressed: () async {
                                   await Firestore.instance
-                                      .collection('read')
+                                      .collection(ReadCollection)
                                       .document(snapshot
                                           .data.documents[index].documentID)
                                       .delete();
@@ -87,14 +88,17 @@ class ReadBooksBuilder extends StatelessWidget {
                                 ),
                                 backgroundColor: Colors.red),
                             FocusedMenuItem(
-                                title: Text('Read again'),
+                                title: Text('Read again',
+                                    style: style.copyWith(color: Colors.black)),
                                 onPressed: () async {
                                   await Firestore.instance
-                                      .collection('read')
+                                      .collection(ReadCollection)
                                       .document(snapshot
                                           .data.documents[index].documentID)
                                       .delete();
-                                  Firestore.instance.collection('reading').add({
+                                  Firestore.instance
+                                      .collection(ReadingCollection)
+                                      .add({
                                     'title': book.title,
                                     'author': book.author,
                                     'imgUrl': book.imgUrl,

@@ -69,6 +69,7 @@ flutter:
      - assets/books/categories/nature.svg
      - assets/books/categories/philosophy.svg
      - assets/books/categories/poetry.svg
+     - assets/error_state/error.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

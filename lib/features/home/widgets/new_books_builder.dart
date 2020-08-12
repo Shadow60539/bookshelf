@@ -86,7 +86,8 @@ class NewBooksBuilder extends StatelessWidget {
                       menuWidth: 170,
                       menuItems: <FocusedMenuItem>[
                         FocusedMenuItem(
-                            title: Text('Add to wish list'),
+                            title: Text('Add to wish list',
+                                style: style.copyWith(color: Colors.black)),
                             onPressed: () {
                               _addToWishList(
                                   index: index,
@@ -99,7 +100,10 @@ class NewBooksBuilder extends StatelessWidget {
                               size: 16,
                             )),
                         FocusedMenuItem(
-                            title: Text('Add to read next'),
+                            title: Text(
+                              'Add to read next',
+                              style: style.copyWith(color: Colors.black),
+                            ),
                             onPressed: () {
                               books.removeAt(index);
                               _addToReadingList(

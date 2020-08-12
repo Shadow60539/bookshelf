@@ -14,7 +14,7 @@ class SignUpPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = Theme.of(context).textTheme.bodyText2;
+    final style = Theme.of(context).textTheme.bodyText1;
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,

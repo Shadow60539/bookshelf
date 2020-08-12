@@ -1,16 +1,13 @@
-import 'dart:convert';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/core/model/book.dart';
 import 'package:flutter_app/core/network/http_get_books.dart';
 import 'package:flutter_app/core/utils/colors.dart';
-import 'package:flutter_app/core/utils/strings.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:http/http.dart';
 
 class SeeAllBooksPage extends StatefulWidget {
   final int category;
@@ -24,6 +21,7 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
     with SingleTickerProviderStateMixin {
   ValueNotifier<int> _currentTab;
   TabController _tabController;
+  Future<List<Book>> _future;
 
   @override
   void initState() {
@@ -31,6 +29,7 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
     _currentTab = ValueNotifier<int>(widget.category);
     _tabController =
         TabController(length: 10, vsync: this, initialIndex: widget.category);
+    _future = NetworkCall().fetchBooks();
   }
 
   @override
@@ -56,52 +55,47 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
   }
 
   Widget searchBar(TextStyle style) {
-    return FocusedMenuHolder(
-      menuItems: <FocusedMenuItem>[
-        FocusedMenuItem(title: Text('Hello'), onPressed: () {}),
-        FocusedMenuItem(title: Text('Hello'), onPressed: () {}),
-      ],
-      onPressed: () {},
-      child: Container(
-        width: double.maxFinite,
-        height: 40,
-        decoration: BoxDecoration(
-            border: Border.all(color: kDarkBlue),
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20)),
-        margin: EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
-        child: Row(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Icon(
-                Icons.search,
-                color: kDarkBlue,
-              ),
+    return Container(
+      width: double.maxFinite,
+      height: 40,
+      decoration: BoxDecoration(
+          border: Border.all(color: kDarkBlue),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20)),
+      margin: EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
+      child: Row(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Icon(
+              Icons.search,
+              color: kDarkBlue,
             ),
-            Text(
-              'Search books by name',
-              style: style.copyWith(color: kDarkBlue),
-            )
-          ],
-        ),
+          ),
+          Text(
+            'Search books by name',
+            style: style.copyWith(color: kDarkBlue),
+          )
+        ],
       ),
     );
   }
 
-  Widget bookBuilder({List<Book> books, int index}) {
+  Widget bookBuilder({List<Book> books, int index, TextStyle style}) {
     return FocusedMenuHolder(
       menuWidth: 170,
       menuItems: <FocusedMenuItem>[
         FocusedMenuItem(
-            title: Text('Add to wish list'),
+            title: Text('Add to wish list',
+                style: style.copyWith(color: Colors.black)),
             onPressed: () {},
             trailingIcon: Icon(
               FontAwesomeIcons.bookmark,
               size: 16,
             )),
         FocusedMenuItem(
-            title: Text('Add to read next'),
+            title: Text('Add to read next',
+                style: style.copyWith(color: Colors.black)),
             onPressed: () {},
             trailingIcon: Icon(
               FontAwesomeIcons.book,
@@ -124,12 +118,12 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
     );
   }
 
-  Widget tabBody({List<Book> books}) {
+  Widget tabBody({List<Book> books, TextStyle style}) {
     return StaggeredGridView.countBuilder(
       padding: EdgeInsets.symmetric(horizontal: 10).copyWith(bottom: 20),
       itemCount: 21,
       itemBuilder: (BuildContext context, int index) {
-        return bookBuilder(books: books, index: index);
+        return bookBuilder(books: books, index: index, style: style);
       },
       staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
       mainAxisSpacing: 4.0,
@@ -138,40 +132,33 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
     );
   }
 
-  Future<List<Book>> getBooks() async {
-    List<Book> books = [];
-    Response response =
-        await get('$baseUrl?q=subject:fiction&maxResults=40&key=$apiKey');
-    var data = jsonDecode(response.body);
-    data['items'].forEach((data) {
-      Book book = Book(
-        title: data['volumeInfo']['title'],
-        imgUrl: data['volumeInfo']['imageLinks']['thumbnail'],
-        author: data['volumeInfo']['authors'][0],
-        desc: data['volumeInfo']['description'],
-        category: data['volumeInfo']['categories'][0],
-        language: data['volumeInfo']['language'],
-        pages: data['volumeInfo']['pageCount'],
-      );
-      books.add(book);
-    });
-    return books;
-  }
-
   @override
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.bodyText1;
     return SafeArea(
       child: FutureBuilder<List<Book>>(
-        future: NetworkCall().fetchBooks(),
+        future: _future,
         builder: (BuildContext context, AsyncSnapshot<List<Book>> books) {
           if (books.connectionState == ConnectionState.done) {
             if (books.hasError) {
-              return Center(
-                child: Text(
-                  '${books.error.toString()}',
-                  style: style.copyWith(color: Colors.white, fontSize: 20),
-                  textAlign: TextAlign.center,
+              return Scaffold(
+                backgroundColor: CupertinoColors.white,
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Image.asset(
+                        'assets/error_state/error.png',
+                        height: 150,
+                        fit: BoxFit.fitHeight,
+                      ),
+                      Text(
+                        'Oops something went wrong',
+                        style:
+                            style.copyWith(color: Colors.black26, fontSize: 12),
+                      )
+                    ],
+                  ),
                 ),
               );
             } else {
@@ -240,16 +227,16 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
                                   controller: _tabController,
                                   physics: NeverScrollableScrollPhysics(),
                                   children: <Widget>[
-                                    tabBody(books: books.data),
-                                    tabBody(books: books.data),
-                                    tabBody(books: books.data),
-                                    tabBody(books: books.data),
-                                    tabBody(books: books.data),
-                                    tabBody(books: books.data),
-                                    tabBody(books: books.data),
-                                    tabBody(books: books.data),
-                                    tabBody(books: books.data),
-                                    tabBody(books: books.data),
+                                    tabBody(books: books.data, style: style),
+                                    tabBody(books: books.data, style: style),
+                                    tabBody(books: books.data, style: style),
+                                    tabBody(books: books.data, style: style),
+                                    tabBody(books: books.data, style: style),
+                                    tabBody(books: books.data, style: style),
+                                    tabBody(books: books.data, style: style),
+                                    tabBody(books: books.data, style: style),
+                                    tabBody(books: books.data, style: style),
+                                    tabBody(books: books.data, style: style),
                                   ],
                                 ),
                               ),

@@ -7,19 +7,17 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       initialRoute: Router.rootPage,
       onGenerateRoute: Router.onGenerateRoute,
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Bookshelf',
       theme: ThemeData.light().copyWith(
         primaryColor: kLightBlue,
         textTheme: TextTheme(
-          bodyText1: TextStyle(fontFamily: 'Lato', color: Colors.white),
-          bodyText2: TextStyle(fontFamily: 'Lato', color: Colors.black),
+          bodyText1: TextStyle(fontFamily: 'Lato', color: Colors.black),
         ),
       ),
     );

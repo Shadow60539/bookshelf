@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/core/model/book.dart';
 import 'package:flutter_app/core/utils/colors.dart';
 import 'package:flutter_app/core/utils/dimens.dart';
+import 'package:flutter_app/core/utils/strings.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
@@ -60,7 +61,9 @@ class WishListedBooksBuilder extends StatelessWidget {
             LimitedBox(
               maxHeight: booksCardHolderLimitedHeight,
               child: StreamBuilder<QuerySnapshot>(
-                stream: Firestore.instance.collection('wishlist').snapshots(),
+                stream: Firestore.instance
+                    .collection(WishListCollection)
+                    .snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData)
@@ -89,7 +92,7 @@ class WishListedBooksBuilder extends StatelessWidget {
                                 ),
                                 onPressed: () async {
                                   await Firestore.instance
-                                      .collection('wishlist')
+                                      .collection(WishListCollection)
                                       .document(snapshot
                                           .data.documents[index].documentID)
                                       .delete();
@@ -100,14 +103,17 @@ class WishListedBooksBuilder extends StatelessWidget {
                                 ),
                                 backgroundColor: Colors.red),
                             FocusedMenuItem(
-                                title: Text('Add to read next'),
+                                title: Text('Add to read next',
+                                    style: style.copyWith(color: Colors.black)),
                                 onPressed: () async {
                                   await Firestore.instance
-                                      .collection('wishlist')
+                                      .collection(WishListCollection)
                                       .document(snapshot
                                           .data.documents[index].documentID)
                                       .delete();
-                                  Firestore.instance.collection('reading').add({
+                                  Firestore.instance
+                                      .collection(ReadingCollection)
+                                      .add({
                                     'title': book.title,
                                     'author': book.author,
                                     'imgUrl': book.imgUrl,
