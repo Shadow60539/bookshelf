@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_app/core/colors.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 
@@ -15,6 +16,7 @@ class _SplashPageState extends State<SplashPage>
   AnimationController _animationController;
   String email;
   String password;
+  String errorMsg;
 
   @override
   void initState() {
@@ -29,38 +31,47 @@ class _SplashPageState extends State<SplashPage>
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: _bottomText(context, style),
-        body: GestureDetector(
-          onTap: () =>
-              Navigator.pushReplacementNamed(context, Router.signUpPage),
-          child: Container(
-            decoration: _decoration(),
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                _title(style),
-                Text(
-                  'Read books like never before',
-                  style: style.copyWith(color: Colors.white),
+        body: Container(
+          decoration: _decoration(),
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              _title(style),
+              Text(
+                'Read books like never before',
+                style: style.copyWith(color: Colors.white),
+              ),
+              FadeTransition(
+                opacity: _animationController
+                    .drive(CurveTween(curve: Curves.slowMiddle)),
+                child: SlideTransition(
+                  child: _form(context),
+                  position: Tween<Offset>(
+                    begin: Offset(0, -0.5),
+                    end: Offset(0, 0),
+                  ).animate(CurvedAnimation(
+                      parent: _animationController, curve: Curves.easeOut)),
                 ),
-                FadeTransition(
-                  opacity: _animationController
-                      .drive(CurveTween(curve: Curves.slowMiddle)),
-                  child: SlideTransition(
-                    child: _form(context),
-                    position: Tween<Offset>(
-                      begin: Offset(0, -0.5),
-                      end: Offset(0, 0),
-                    ).animate(CurvedAnimation(
-                        parent: _animationController, curve: Curves.easeOut)),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
+  }
+
+  String _showErrorMessage(String errorMessage) {
+    switch (errorMessage) {
+      case 'ERROR_WRONG_PASSWORD':
+        return 'Invalid Password';
+        break;
+      case 'ERROR_USER_NOT_FOUND':
+        return 'No user with this email';
+        break;
+      default:
+        return 'Sign In';
+    }
   }
 
   Widget _bottomText(BuildContext context, TextStyle style) {
@@ -85,7 +96,7 @@ class _SplashPageState extends State<SplashPage>
                 ]),
                 child: RaisedButton(
                   child: Text(
-                    'Sign In',
+                    _showErrorMessage(errorMsg),
                     style: style.copyWith(
                         color: kDarkBlue,
                         fontWeight: FontWeight.w600,
@@ -96,10 +107,15 @@ class _SplashPageState extends State<SplashPage>
                   onPressed: () async {
                     if (_animationController.status ==
                         AnimationStatus.completed) {
-                      await _auth.signInWithEmailAndPassword(
-                          email: email, password: password);
-                      Navigator.pushReplacementNamed(
-                          context, Router.discoverPage);
+                      try {
+                        await _auth.signInWithEmailAndPassword(
+                            email: email, password: password);
+                      } catch (e) {
+                        PlatformException error = e as PlatformException;
+                        setState(() {
+                          errorMsg = error.code;
+                        });
+                      }
                     } else {
                       _animationController.forward();
                     }

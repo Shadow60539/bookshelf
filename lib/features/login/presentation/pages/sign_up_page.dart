@@ -79,7 +79,7 @@ class SignUpPage extends StatelessWidget {
                                   email: email, password: password);
                           if (newUser != null) {
                             Navigator.pushReplacementNamed(
-                                context, Router.discoverPage);
+                                context, Router.indexPage);
                           }
                         } catch (e) {
                           print(e);

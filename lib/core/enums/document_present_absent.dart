@@ -1,0 +1,1 @@
+enum Document { present, absent }

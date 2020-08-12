@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/core/colors.dart';
 import 'package:flutter_app/core/model/book.dart';
+import 'package:flutter_app/core/network/http_get_books.dart';
 import 'package:flutter_app/core/strings.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -162,7 +163,7 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
     final style = Theme.of(context).textTheme.bodyText1;
     return SafeArea(
       child: FutureBuilder<List<Book>>(
-        future: getBooks(),
+        future: NetworkCall().fetchBooks(),
         builder: (BuildContext context, AsyncSnapshot<List<Book>> books) {
           if (books.connectionState == ConnectionState.done) {
             if (books.hasError) {

@@ -97,9 +97,10 @@ class SettingsPage extends StatelessWidget {
                     title: 'Change Password',
                     iconData: Icons.vpn_key),
                 buildSettingsField(
-                    style: style,
-                    title: 'About App',
-                    iconData: Icons.info_outline),
+                  style: style,
+                  title: 'About App',
+                  iconData: Icons.info_outline,
+                ),
                 buildSettingsField(
                     style: style,
                     title: 'Logout',

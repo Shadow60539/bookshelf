@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_app/features/splash/presentation/pages/splash_page.dart';
 import 'package:flutter_app/features/login/presentation/pages/sign_up_page.dart';
+import 'package:flutter_app/features/home/presentation/pages/root_page.dart';
 import 'package:flutter_app/features/home/presentation/pages/index_page.dart';
 import 'package:flutter_app/features/home/presentation/pages/discover_page.dart';
 import 'package:flutter_app/features/home/presentation/pages/settings_page.dart';
@@ -19,6 +20,7 @@ import 'package:flutter_app/core/model/book.dart';
 class Router {
   static const splashPage = '/';
   static const signUpPage = '/sign-up-page';
+  static const rootPage = '/root-page';
   static const indexPage = '/index-page';
   static const discoverPage = '/discover-page';
   static const settingsPage = '/settings-page';
@@ -36,6 +38,11 @@ class Router {
       case Router.signUpPage:
         return MaterialPageRoute<dynamic>(
           builder: (_) => SignUpPage(),
+          settings: settings,
+        );
+      case Router.rootPage:
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => RootPage(),
           settings: settings,
         );
       case Router.indexPage:
