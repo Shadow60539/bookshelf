@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/core/colors.dart';
 import 'package:flutter_app/core/model/book.dart';
+import 'package:flutter_app/core/utils/colors.dart';
 
 class BookPage extends StatefulWidget {
   final Book book;

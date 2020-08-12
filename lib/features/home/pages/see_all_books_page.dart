@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/core/colors.dart';
 import 'package:flutter_app/core/model/book.dart';
 import 'package:flutter_app/core/network/http_get_books.dart';
-import 'package:flutter_app/core/strings.dart';
+import 'package:flutter_app/core/utils/colors.dart';
+import 'package:flutter_app/core/utils/strings.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:focused_menu/focused_menu.dart';

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter_app/core/model/book.dart';
 import 'package:http/http.dart';
 
-import '../strings.dart';
+import '../utils/strings.dart';
 
 class NetworkCall {
   Future<List<Book>> fetchBooks() async {

@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/core/colors.dart';
-import 'package:flutter_app/core/strings.dart';
+import 'package:flutter_app/core/utils/colors.dart';
+import 'package:flutter_app/core/utils/strings.dart';
 
 class SettingsPage extends StatelessWidget {
   @override

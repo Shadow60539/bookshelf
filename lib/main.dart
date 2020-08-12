@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/core/colors.dart';
+import 'package:flutter_app/core/utils/colors.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 
 void main() {

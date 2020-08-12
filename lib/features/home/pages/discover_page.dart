@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_app/core/colors.dart';
 import 'package:flutter_app/core/model/book.dart';
 import 'package:flutter_app/core/network/http_get_books.dart';
-import 'package:flutter_app/core/strings.dart';
-import 'package:flutter_app/features/home/presentation/widgets/new_books_builder.dart';
-import 'package:flutter_app/features/home/presentation/widgets/read_books_builder.dart';
-import 'package:flutter_app/features/home/presentation/widgets/reading_books_builder.dart';
-import 'package:flutter_app/features/home/presentation/widgets/wishlisted_books_builder.dart';
+import 'package:flutter_app/core/utils/colors.dart';
+import 'package:flutter_app/core/utils/strings.dart';
+import 'package:flutter_app/features/home/widgets/new_books_builder.dart';
+import 'package:flutter_app/features/home/widgets/read_books_builder.dart';
+import 'package:flutter_app/features/home/widgets/reading_books_builder.dart';
+import 'package:flutter_app/features/home/widgets/wishlisted_books_builder.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/features/home/presentation/pages/index_page.dart';
-import 'package:flutter_app/features/splash/presentation/pages/splash_page.dart';
+import 'package:flutter_app/features/home/pages/index_page.dart';
+import 'package:flutter_app/features/splash/pages/splash_page.dart';
 
 enum AuthStatus {
   NOT_DETERMINED,

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/core/colors.dart';
-import 'package:flutter_app/features/home/presentation/pages/discover_page.dart';
-import 'package:flutter_app/features/home/presentation/pages/settings_page.dart';
+import 'package:flutter_app/core/utils/colors.dart';
+import 'package:flutter_app/features/home/pages/discover_page.dart';
+import 'package:flutter_app/features/home/pages/settings_page.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'discover_page.dart';
 
 class IndexPage extends StatefulWidget {
   @override

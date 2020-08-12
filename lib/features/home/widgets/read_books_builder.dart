@@ -1,26 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/core/colors.dart';
-import 'package:flutter_app/core/dimens.dart';
 import 'package:flutter_app/core/model/book.dart';
+import 'package:flutter_app/core/utils/dimens.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class WishListedBooksBuilder extends StatelessWidget {
+class ReadBooksBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.bodyText1;
 
     return Container(
-      margin: EdgeInsets.only(top: 1200, left: 30),
+      margin: EdgeInsets.only(top: 1580, right: 30),
       height: booksCardHolderHeight,
       width: double.maxFinite,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30), bottomLeft: Radius.circular(30)),
+              topRight: Radius.circular(30), bottomRight: Radius.circular(30)),
           color: Colors.white,
           boxShadow: [
             BoxShadow(color: Colors.black12, spreadRadius: 10, blurRadius: 20)
@@ -30,22 +29,9 @@ class WishListedBooksBuilder extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  'Wishlisted',
-                  style: style.copyWith(
-                      fontSize: 30, color: CupertinoColors.black),
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Text(
-                    'Clear',
-                    style: style.copyWith(color: kDarkBlue),
-                  ),
-                )
-              ],
+            Text(
+              'Finished Reading',
+              style: style.copyWith(fontSize: 30, color: CupertinoColors.black),
             ),
             SizedBox(
               height: 10,
@@ -60,11 +46,12 @@ class WishListedBooksBuilder extends StatelessWidget {
             LimitedBox(
               maxHeight: booksCardHolderLimitedHeight,
               child: StreamBuilder<QuerySnapshot>(
-                stream: Firestore.instance.collection('wishlist').snapshots(),
+                stream: Firestore.instance.collection('read').snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData)
                     return ListView.builder(
+                      reverse: true,
                       scrollDirection: Axis.horizontal,
                       itemCount: snapshot.data.documents.length,
                       itemBuilder: (BuildContext context, int index) {
@@ -89,7 +76,7 @@ class WishListedBooksBuilder extends StatelessWidget {
                                 ),
                                 onPressed: () async {
                                   await Firestore.instance
-                                      .collection('wishlist')
+                                      .collection('read')
                                       .document(snapshot
                                           .data.documents[index].documentID)
                                       .delete();
@@ -100,10 +87,10 @@ class WishListedBooksBuilder extends StatelessWidget {
                                 ),
                                 backgroundColor: Colors.red),
                             FocusedMenuItem(
-                                title: Text('Add to read next'),
+                                title: Text('Read again'),
                                 onPressed: () async {
                                   await Firestore.instance
-                                      .collection('wishlist')
+                                      .collection('read')
                                       .document(snapshot
                                           .data.documents[index].documentID)
                                       .delete();
