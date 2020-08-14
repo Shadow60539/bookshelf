@@ -21,6 +21,14 @@ class DiscoverPage extends StatefulWidget {
 
 class _DiscoverPageState extends State<DiscoverPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  Future<List<Book>> _future;
+
+  @override
+  void initState() {
+    _future = NetworkCall().fetchBooks();
+    super.initState();
+  }
+
   Widget _title(TextStyle style) {
     return Container(
       margin: EdgeInsets.only(top: 100, left: 30),
@@ -183,7 +191,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
     final style = Theme.of(context).textTheme.bodyText1;
     return SafeArea(
       child: FutureBuilder<List<Book>>(
-        future: NetworkCall().fetchBooks(),
+        future: _future,
         builder: (BuildContext context, AsyncSnapshot<List<Book>> books) {
           if (books.connectionState == ConnectionState.done) {
             if (books.hasError) {

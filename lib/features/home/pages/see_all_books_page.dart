@@ -23,7 +23,7 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
     with SingleTickerProviderStateMixin {
   ValueNotifier<int> _currentTab;
   TabController _tabController;
-  Future<List<Book>> _future;
+  Future<List<List<Book>>> _future;
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
     _currentTab = ValueNotifier<int>(widget.category);
     _tabController =
         TabController(length: 10, vsync: this, initialIndex: widget.category);
-    _future = NetworkCall().fetchBooks();
+    _future = NetworkCall().fetchBooksAccordingToCategory();
   }
 
   @override
@@ -117,7 +117,7 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
   Widget tabBody({List<Book> books, TextStyle style}) {
     return StaggeredGridView.countBuilder(
       padding: EdgeInsets.symmetric(horizontal: 10).copyWith(bottom: 20),
-      itemCount: 21,
+      itemCount: books.length,
       itemBuilder: (BuildContext context, int index) {
         return bookBuilder(books: books, index: index, style: style);
       },
@@ -132,11 +132,14 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.bodyText1;
     return SafeArea(
-      child: FutureBuilder<List<Book>>(
+      child: FutureBuilder<List<List<Book>>>(
         future: _future,
-        builder: (BuildContext context, AsyncSnapshot<List<Book>> books) {
-          if (books.connectionState == ConnectionState.done) {
-            if (books.hasError) {
+        builder: (BuildContext context,
+            AsyncSnapshot<List<List<Book>>> listOfBooks) {
+          if (listOfBooks.connectionState == ConnectionState.done) {
+            if (listOfBooks.hasError) {
+              print(listOfBooks.error);
+              print(listOfBooks.data);
               return ErrorStateBuilder();
             } else {
               return ValueListenableBuilder(
@@ -235,16 +238,36 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
                                 child: TabBarView(
                                   controller: _tabController,
                                   children: <Widget>[
-                                    tabBody(books: books.data, style: style),
-                                    tabBody(books: books.data, style: style),
-                                    tabBody(books: books.data, style: style),
-                                    tabBody(books: books.data, style: style),
-                                    tabBody(books: books.data, style: style),
-                                    tabBody(books: books.data, style: style),
-                                    tabBody(books: books.data, style: style),
-                                    tabBody(books: books.data, style: style),
-                                    tabBody(books: books.data, style: style),
-                                    tabBody(books: books.data, style: style),
+                                    tabBody(
+                                        books: listOfBooks.data[0],
+                                        style: style),
+                                    tabBody(
+                                        books: listOfBooks.data[1],
+                                        style: style),
+                                    tabBody(
+                                        books: listOfBooks.data[2],
+                                        style: style),
+                                    tabBody(
+                                        books: listOfBooks.data[3],
+                                        style: style),
+                                    tabBody(
+                                        books: listOfBooks.data[4],
+                                        style: style),
+                                    tabBody(
+                                        books: listOfBooks.data[5],
+                                        style: style),
+                                    tabBody(
+                                        books: listOfBooks.data[6],
+                                        style: style),
+                                    tabBody(
+                                        books: listOfBooks.data[7],
+                                        style: style),
+                                    tabBody(
+                                        books: listOfBooks.data[8],
+                                        style: style),
+                                    tabBody(
+                                        books: listOfBooks.data[9],
+                                        style: style),
                                   ],
                                 ),
                               ),

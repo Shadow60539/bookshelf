@@ -37,6 +37,8 @@ dependencies:
   focused_menu: ^1.0.1
   http: ^0.12.2
   flutter_svg:
+  dio: ^3.0.9
+  dio_http_cache: ^0.2.6
 
 
 dev_dependencies:
