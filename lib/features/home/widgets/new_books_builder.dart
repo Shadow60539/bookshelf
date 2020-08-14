@@ -124,45 +124,42 @@ class NewBooksBuilder extends StatelessWidget {
                               fromLibrary: false,
                               bookList: books,
                               index: index)),
-                      child: Hero(
-                        tag: books[index].imgUrl,
-                        child: FittedBox(
-                          fit: BoxFit.contain,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Container(
-                                  height: 150,
-                                  width: 100,
-                                  child: Image.network(
-                                    books[index].imgUrl,
-                                    fit: BoxFit.fill,
-                                  ),
+                      child: FittedBox(
+                        fit: BoxFit.contain,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
+                                height: 150,
+                                width: 100,
+                                child: Image.network(
+                                  books[index].imgUrl,
+                                  fit: BoxFit.fill,
                                 ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Text(
-                                  books[index].author.length > 20
-                                      ? '${books[index].author.substring(0, 20)}...'
-                                      : books[index].author,
-                                  style: style.copyWith(
-                                      color: Colors.grey, fontSize: 12),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  books[index].title.length > 15
-                                      ? '${books[index].title.substring(0, 15)}...'
-                                      : books[index].title,
-                                  style: style.copyWith(
-                                      color: Colors.black, fontSize: 16),
-                                ),
-                              ],
-                            ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                books[index].author.length > 20
+                                    ? '${books[index].author.substring(0, 20)}...'
+                                    : books[index].author,
+                                style: style.copyWith(
+                                    color: Colors.grey, fontSize: 12),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                books[index].title.length > 15
+                                    ? '${books[index].title.substring(0, 15)}...'
+                                    : books[index].title,
+                                style: style.copyWith(
+                                    color: Colors.black, fontSize: 16),
+                              ),
+                            ],
                           ),
                         ),
                       ),
