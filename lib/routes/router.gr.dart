@@ -4,18 +4,18 @@
 // AutoRouteGenerator
 // **************************************************************************
 
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter_app/features/splash/pages/splash_page.dart';
-import 'package:flutter_app/features/login/pages/sign_up_page.dart';
-import 'package:flutter_app/features/home/pages/root_page.dart';
-import 'package:flutter_app/features/home/pages/index_page.dart';
-import 'package:flutter_app/features/home/pages/discover_page.dart';
-import 'package:flutter_app/features/home/pages/settings_page.dart';
-import 'package:flutter_app/features/home/pages/see_all_books_page.dart';
-import 'package:flutter_app/features/home/pages/book_page.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_app/core/model/book.dart';
+import 'package:flutter_app/features/home/pages/book_page.dart';
+import 'package:flutter_app/features/home/pages/discover_page.dart';
+import 'package:flutter_app/features/home/pages/index_page.dart';
+import 'package:flutter_app/features/home/pages/root_page.dart';
+import 'package:flutter_app/features/home/pages/see_all_books_page.dart';
+import 'package:flutter_app/features/home/pages/settings_page.dart';
+import 'package:flutter_app/features/login/pages/sign_up_page.dart';
+import 'package:flutter_app/features/splash/pages/splash_page.dart';
 
 class Router {
   static const splashPage = '/';
@@ -76,7 +76,10 @@ class Router {
         final typedArgs = args as BookPageArguments;
         return MaterialPageRoute<dynamic>(
           builder: (_) => BookPage(
-              book: typedArgs.book, fromLibrary: typedArgs.fromLibrary),
+              book: typedArgs.book,
+              fromLibrary: typedArgs.fromLibrary,
+              bookList: typedArgs.bookList,
+              index: typedArgs.index),
           settings: settings,
         );
       default:
@@ -93,5 +96,11 @@ class Router {
 class BookPageArguments {
   final Book book;
   final bool fromLibrary;
-  BookPageArguments({@required this.book, this.fromLibrary = false});
+  final List<Book> bookList;
+  final int index;
+  BookPageArguments(
+      {@required this.book,
+      this.fromLibrary = false,
+      this.bookList,
+      this.index = 0});
 }

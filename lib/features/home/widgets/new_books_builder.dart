@@ -120,7 +120,10 @@ class NewBooksBuilder extends StatelessWidget {
                       onPressed: () => Navigator.pushNamed(
                           context, Router.bookPage,
                           arguments: BookPageArguments(
-                              book: books[index], fromLibrary: false)),
+                              book: books[index],
+                              fromLibrary: false,
+                              bookList: books,
+                              index: index)),
                       child: Hero(
                         tag: books[index].imgUrl,
                         child: FittedBox(

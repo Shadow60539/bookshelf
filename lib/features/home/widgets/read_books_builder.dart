@@ -47,7 +47,8 @@ class ReadBooksBuilder extends StatelessWidget {
             LimitedBox(
               maxHeight: booksCardHolderLimitedHeight,
               child: StreamBuilder<QuerySnapshot>(
-                stream: Firestore.instance.collection('read').snapshots(),
+                stream:
+                    Firestore.instance.collection(ReadCollection).snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData)
@@ -58,6 +59,18 @@ class ReadBooksBuilder extends StatelessWidget {
                       itemBuilder: (BuildContext context, int index) {
                         Map<String, dynamic> readingBookData =
                             snapshot.data.documents[index].data;
+                        List<Book> books = [];
+                        snapshot.data.documents.forEach((element) {
+                          Book book = Book(
+                              title: element.data['title'],
+                              author: element.data['author'],
+                              imgUrl: element.data['imgUrl'],
+                              desc: element.data['desc'],
+                              language: element.data['language'],
+                              category: element.data['category'],
+                              pages: element.data['pages']);
+                          books.add(book);
+                        });
                         Book book = Book(
                             title: readingBookData['title'],
                             author: readingBookData['author'],
@@ -116,7 +129,10 @@ class ReadBooksBuilder extends StatelessWidget {
                           onPressed: () => Navigator.pushNamed(
                               context, Router.bookPage,
                               arguments: BookPageArguments(
-                                  book: book, fromLibrary: true)),
+                                  book: book,
+                                  fromLibrary: true,
+                                  bookList: books,
+                                  index: index)),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Column(
