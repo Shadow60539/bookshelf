@@ -22,7 +22,7 @@ class WishListedBooksBuilder extends StatefulWidget {
 
 class _WishListedBooksBuilderState extends State<WishListedBooksBuilder> {
   FirebaseAuth user = FirebaseAuth.instance;
-  String userId = "";
+  String userId = "uid";
   @override
   void initState() {
     user.currentUser().then((value) {

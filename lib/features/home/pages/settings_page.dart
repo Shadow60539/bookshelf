@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/core/utils/colors.dart';
 import 'package:flutter_app/core/utils/strings.dart';
-import 'package:flutter_app/routes/router.gr.dart';
 
 class SettingsPage extends StatelessWidget {
   getUserName() async {
@@ -165,9 +164,8 @@ class SettingsPage extends StatelessWidget {
                               CupertinoButton(
                                   child: Text('Yes'),
                                   onPressed: () async {
+                                    Navigator.pop(context);
                                     await FirebaseAuth.instance.signOut();
-                                    Navigator.pushNamed(
-                                        context, Router.rootPage);
                                   }),
                             ],
                           );

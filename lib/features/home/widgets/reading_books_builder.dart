@@ -23,7 +23,7 @@ class ReadingBooksBuilder extends StatefulWidget {
 
 class _ReadingBooksBuilderState extends State<ReadingBooksBuilder> {
   FirebaseAuth user = FirebaseAuth.instance;
-  String userId = "";
+  String userId = "uid";
   @override
   void initState() {
     user.currentUser().then((value) {

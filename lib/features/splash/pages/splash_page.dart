@@ -153,7 +153,6 @@ class _SplashPageState extends State<SplashPage>
                           });
                           await _auth.signInWithEmailAndPassword(
                               email: email, password: password);
-                          Navigator.pushNamed(context, Router.indexPage);
                         } catch (e) {
                           PlatformException error = e as PlatformException;
                           setState(() {
