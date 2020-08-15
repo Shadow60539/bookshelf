@@ -9,8 +9,7 @@ read books like never before at free of cost.
 
 Before we start, you can take a look at the app:
 
-![image](images/app.jpg
-
+![Output sample](assets/images/demo.gif)
 
 ## Key Features
 
