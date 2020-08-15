@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/core/utils/colors.dart';
 import 'package:flutter_app/core/utils/strings.dart';
@@ -135,8 +136,43 @@ class SettingsPage extends StatelessWidget {
                     title: 'Logout',
                     iconData: Icons.exit_to_app,
                     onTap: () async {
-                      await FirebaseAuth.instance.signOut();
-                      Navigator.pushNamed(context, Router.rootPage);
+                      showCupertinoDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return CupertinoAlertDialog(
+                            content: Text(
+                              'Are you sure you want to logout',
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                            title: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                'Warning',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    .copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15),
+                              ),
+                            ),
+                            actions: <Widget>[
+                              CupertinoButton(
+                                  child: Text('No'),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  }),
+                              CupertinoButton(
+                                  child: Text('Yes'),
+                                  onPressed: () async {
+                                    await FirebaseAuth.instance.signOut();
+                                    Navigator.pushNamed(
+                                        context, Router.rootPage);
+                                  }),
+                            ],
+                          );
+                        },
+                      );
                     }),
               ],
             ),
