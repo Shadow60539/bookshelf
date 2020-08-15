@@ -61,28 +61,40 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
   }
 
   Widget searchBar(TextStyle style) {
-    return Container(
-      width: double.maxFinite,
-      height: 40,
-      decoration: BoxDecoration(
-          border: Border.all(color: kDarkBlue),
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20)),
-      margin: EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
-      child: Row(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Icon(
-              Icons.search,
-              color: kDarkBlue,
-            ),
+    return GestureDetector(
+      onTap: () {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text(
+            'Tapped on search',
+            style: style.copyWith(color: Colors.white),
           ),
-          Text(
-            'Search books by name',
-            style: style.copyWith(color: kDarkBlue),
-          )
-        ],
+          backgroundColor: kDarkBlue,
+          duration: Duration(seconds: 1),
+        ));
+      },
+      child: Container(
+        width: double.maxFinite,
+        height: 40,
+        decoration: BoxDecoration(
+            border: Border.all(color: kDarkBlue),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20)),
+        margin: EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
+        child: Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Icon(
+                Icons.search,
+                color: kDarkBlue,
+              ),
+            ),
+            Text(
+              'Search books by name',
+              style: style.copyWith(color: kDarkBlue),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -47,8 +47,7 @@ class SettingsPage extends StatelessWidget {
                       return Padding(
                         padding: const EdgeInsets.only(top: 20),
                         child: Text(
-                          //TODO:Remember
-                          'Hello Sir',
+                          'Hello ${snapshot.data['userName']}',
                           style:
                               style.copyWith(color: Colors.black, fontSize: 20),
                         ),
