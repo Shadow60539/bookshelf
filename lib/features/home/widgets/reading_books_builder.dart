@@ -138,189 +138,186 @@ class _ReadingBooksBuilderState extends State<ReadingBooksBuilder> {
                   ),
                   LimitedBox(
                     maxHeight: booksCardHolderLimitedHeight,
-                    child: AnimatedCrossFade(
-                        firstChild: Align(
-                          alignment: Alignment.center,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              CircleAvatar(
-                                radius: 50,
-                                backgroundImage: NetworkImage(emptyUrl),
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                'Feed this list with books',
-                                style: style.copyWith(color: Colors.black26),
-                              ),
-                            ],
-                          ),
-                        ),
-                        secondChild: ListView.builder(
-                          reverse: true,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: snapshot.data.documents.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            Map<String, dynamic> readingBookData =
-                                snapshot.data.documents[index].data;
-                            List<Book> books = [];
-                            snapshot.data.documents.forEach((element) {
-                              Book book = Book(
-                                  title: element.data['title'],
-                                  author: element.data['author'],
-                                  imgUrl: element.data['imgUrl'],
-                                  desc: element.data['desc'],
-                                  language: element.data['language'],
-                                  category: element.data['category'],
-                                  pages: element.data['pages']);
-                              books.add(book);
-                            });
-                            Book book = Book(
-                                title: readingBookData['title'],
-                                author: readingBookData['author'],
-                                imgUrl: readingBookData['imgUrl'],
-                                desc: readingBookData['desc'],
-                                language: readingBookData['language'],
-                                category: readingBookData['category'],
-                                pages: readingBookData['pages']);
-                            return FocusedMenuHolder(
-                              menuWidth: 170,
-                              menuItems: <FocusedMenuItem>[
-                                FocusedMenuItem(
-                                    title: Text(
-                                      'Remove',
-                                      style: style.copyWith(
-                                          color: CupertinoColors.white),
-                                    ),
-                                    onPressed: () async {
-                                      await Firestore.instance
-                                          .collection(UsersCollection)
-                                          .document(userId)
-                                          .collection(ReadingCollection)
-                                          .document(snapshot
-                                              .data.documents[index].documentID)
-                                          .delete();
-                                    },
-                                    trailingIcon: Icon(
-                                      Icons.delete,
-                                      size: 18,
-                                    ),
-                                    backgroundColor: Colors.red),
-                                FocusedMenuItem(
-                                    title: Text('Add to wishlist',
-                                        style: style.copyWith(
-                                            color: Colors.black)),
-                                    onPressed: () async {
-                                      await Firestore.instance
-                                          .collection(UsersCollection)
-                                          .document(userId)
-                                          .collection(ReadingCollection)
-                                          .document(snapshot
-                                              .data.documents[index].documentID)
-                                          .delete();
-                                      Firestore.instance
-                                          .collection(UsersCollection)
-                                          .document(userId)
-                                          .collection(WishListCollection)
-                                          .add({
-                                        'title': book.title,
-                                        'author': book.author,
-                                        'imgUrl': book.imgUrl,
-                                        'language': book.language,
-                                        'pages': book.pages,
-                                        'desc': book.desc,
-                                        'category': book.category
-                                      });
-                                    },
-                                    trailingIcon: Icon(
-                                      FontAwesomeIcons.book,
-                                      size: 16,
-                                    )),
-                                FocusedMenuItem(
-                                    title: Text('Mark as read',
-                                        style: style.copyWith(
-                                            color: Colors.black)),
-                                    onPressed: () async {
-                                      await Firestore.instance
-                                          .collection(UsersCollection)
-                                          .document(userId)
-                                          .collection(ReadingCollection)
-                                          .document(snapshot
-                                              .data.documents[index].documentID)
-                                          .delete();
-                                      Firestore.instance
-                                          .collection(UsersCollection)
-                                          .document(userId)
-                                          .collection(ReadCollection)
-                                          .add({
-                                        'title': book.title,
-                                        'author': book.author,
-                                        'imgUrl': book.imgUrl,
-                                        'language': book.language,
-                                        'pages': book.pages,
-                                        'desc': book.desc,
-                                        'category': book.category
-                                      });
-                                    },
-                                    trailingIcon: Icon(
-                                      FontAwesomeIcons.check,
-                                      size: 14,
-                                      color: kDarkBlue,
-                                    )),
-                              ],
-                              onPressed: () => Navigator.pushNamed(
-                                  context, Router.bookPage,
-                                  arguments: BookPageArguments(
-                                      book: book,
-                                      fromLibrary: true,
-                                      bookList: books,
-                                      index: index)),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Container(
-                                      height: 150,
-                                      width: 100,
-                                      child: Image.network(
-                                        readingBookData['imgUrl'],
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      readingBookData['author'].length > 20
-                                          ? '${readingBookData['author'].substring(0, 20)}...'
-                                          : readingBookData['author'],
-                                      style: style.copyWith(
-                                          color: Colors.grey, fontSize: 12),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      readingBookData['title'].length > 15
-                                          ? '${readingBookData['title'].substring(0, 15)}...'
-                                          : readingBookData['title'],
-                                      style: style.copyWith(
-                                          color: Colors.black, fontSize: 16),
-                                    ),
-                                  ],
+                    child: snapshot.data.documents.isEmpty
+                        ? Align(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                CircleAvatar(
+                                  radius: 50,
+                                  backgroundImage: NetworkImage(emptyUrl),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                        crossFadeState: snapshot.data.documents.isEmpty
-                            ? CrossFadeState.showFirst
-                            : CrossFadeState.showSecond,
-                        duration: Duration(milliseconds: 600)),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  'Feed this list with books',
+                                  style: style.copyWith(color: Colors.black26),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            reverse: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: snapshot.data.documents.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              Map<String, dynamic> readingBookData =
+                                  snapshot.data.documents[index].data;
+                              List<Book> books = [];
+                              snapshot.data.documents.forEach((element) {
+                                Book book = Book(
+                                    title: element.data['title'],
+                                    author: element.data['author'],
+                                    imgUrl: element.data['imgUrl'],
+                                    desc: element.data['desc'],
+                                    language: element.data['language'],
+                                    category: element.data['category'],
+                                    pages: element.data['pages']);
+                                books.add(book);
+                              });
+                              Book book = Book(
+                                  title: readingBookData['title'],
+                                  author: readingBookData['author'],
+                                  imgUrl: readingBookData['imgUrl'],
+                                  desc: readingBookData['desc'],
+                                  language: readingBookData['language'],
+                                  category: readingBookData['category'],
+                                  pages: readingBookData['pages']);
+                              return FocusedMenuHolder(
+                                menuWidth: 170,
+                                menuItems: <FocusedMenuItem>[
+                                  FocusedMenuItem(
+                                      title: Text(
+                                        'Remove',
+                                        style: style.copyWith(
+                                            color: CupertinoColors.white),
+                                      ),
+                                      onPressed: () async {
+                                        await Firestore.instance
+                                            .collection(UsersCollection)
+                                            .document(userId)
+                                            .collection(ReadingCollection)
+                                            .document(snapshot.data
+                                                .documents[index].documentID)
+                                            .delete();
+                                      },
+                                      trailingIcon: Icon(
+                                        Icons.delete,
+                                        size: 18,
+                                      ),
+                                      backgroundColor: Colors.red),
+                                  FocusedMenuItem(
+                                      title: Text('Add to wishlist',
+                                          style: style.copyWith(
+                                              color: Colors.black)),
+                                      onPressed: () async {
+                                        await Firestore.instance
+                                            .collection(UsersCollection)
+                                            .document(userId)
+                                            .collection(ReadingCollection)
+                                            .document(snapshot.data
+                                                .documents[index].documentID)
+                                            .delete();
+                                        Firestore.instance
+                                            .collection(UsersCollection)
+                                            .document(userId)
+                                            .collection(WishListCollection)
+                                            .add({
+                                          'title': book.title,
+                                          'author': book.author,
+                                          'imgUrl': book.imgUrl,
+                                          'language': book.language,
+                                          'pages': book.pages,
+                                          'desc': book.desc,
+                                          'category': book.category
+                                        });
+                                      },
+                                      trailingIcon: Icon(
+                                        FontAwesomeIcons.book,
+                                        size: 16,
+                                      )),
+                                  FocusedMenuItem(
+                                      title: Text('Mark as read',
+                                          style: style.copyWith(
+                                              color: Colors.black)),
+                                      onPressed: () async {
+                                        await Firestore.instance
+                                            .collection(UsersCollection)
+                                            .document(userId)
+                                            .collection(ReadingCollection)
+                                            .document(snapshot.data
+                                                .documents[index].documentID)
+                                            .delete();
+                                        Firestore.instance
+                                            .collection(UsersCollection)
+                                            .document(userId)
+                                            .collection(ReadCollection)
+                                            .add({
+                                          'title': book.title,
+                                          'author': book.author,
+                                          'imgUrl': book.imgUrl,
+                                          'language': book.language,
+                                          'pages': book.pages,
+                                          'desc': book.desc,
+                                          'category': book.category
+                                        });
+                                      },
+                                      trailingIcon: Icon(
+                                        FontAwesomeIcons.check,
+                                        size: 14,
+                                        color: kDarkBlue,
+                                      )),
+                                ],
+                                onPressed: () => Navigator.pushNamed(
+                                    context, Router.bookPage,
+                                    arguments: BookPageArguments(
+                                        book: book,
+                                        fromLibrary: true,
+                                        bookList: books,
+                                        index: index)),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Container(
+                                        height: 150,
+                                        width: 100,
+                                        child: Image.network(
+                                          readingBookData['imgUrl'],
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        readingBookData['author'].length > 20
+                                            ? '${readingBookData['author'].substring(0, 20)}...'
+                                            : readingBookData['author'],
+                                        style: style.copyWith(
+                                            color: Colors.grey, fontSize: 12),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        readingBookData['title'].length > 15
+                                            ? '${readingBookData['title'].substring(0, 15)}...'
+                                            : readingBookData['title'],
+                                        style: style.copyWith(
+                                            color: Colors.black, fontSize: 16),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                   ),
                 ],
               ),

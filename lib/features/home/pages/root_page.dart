@@ -36,9 +36,7 @@ class _RootPageState extends State<RootPage> {
   Widget buildWaitingScreen() {
     return Scaffold(
       body: Container(
-        alignment: Alignment.center,
-        child: CircularProgressIndicator(),
-      ),
+          alignment: Alignment.center, child: CircularProgressIndicator()),
     );
   }
 

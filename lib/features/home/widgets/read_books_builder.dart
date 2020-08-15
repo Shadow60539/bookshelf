@@ -136,9 +136,9 @@ class _ReadBooksBuilderState extends State<ReadBooksBuilder> {
                     height: 20,
                   ),
                   LimitedBox(
-                      maxHeight: booksCardHolderLimitedHeight,
-                      child: AnimatedCrossFade(
-                          firstChild: Align(
+                    maxHeight: booksCardHolderLimitedHeight,
+                    child: snapshot.data.documents.isEmpty
+                        ? Align(
                             alignment: Alignment.center,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -156,8 +156,8 @@ class _ReadBooksBuilderState extends State<ReadBooksBuilder> {
                                 ),
                               ],
                             ),
-                          ),
-                          secondChild: ListView.builder(
+                          )
+                        : ListView.builder(
                             reverse: true,
                             scrollDirection: Axis.horizontal,
                             itemCount: snapshot.data.documents.length,
@@ -280,10 +280,7 @@ class _ReadBooksBuilderState extends State<ReadBooksBuilder> {
                               );
                             },
                           ),
-                          crossFadeState: snapshot.data.documents.isEmpty
-                              ? CrossFadeState.showFirst
-                              : CrossFadeState.showSecond,
-                          duration: Duration(milliseconds: 600))),
+                  ),
                 ],
               ),
             ),
