@@ -91,7 +91,7 @@ assets | images files
 Then the lib directory
 
 
-![image](images/lib.png)
+![lib](assets/images/lib.png)
 
 
 
