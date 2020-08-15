@@ -234,7 +234,6 @@ class NewBooksBuilder extends StatelessWidget {
       TextStyle style,
       int index,
       ValueNotifier readingNotifier}) async {
-    print('---------------------${books[index].title}');
     var user = await FirebaseAuth.instance.currentUser();
     return await firestore
         .collection(UsersCollection)

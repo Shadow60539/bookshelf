@@ -8,7 +8,6 @@ class RootPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder<FirebaseUser>(
       builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) {
-        print(snapshot.data.toString());
         if (snapshot.connectionState == ConnectionState.active) {
           if (!snapshot.hasData)
             return SplashPage();

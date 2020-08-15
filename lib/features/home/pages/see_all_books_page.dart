@@ -289,8 +289,6 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
             AsyncSnapshot<List<List<Book>>> listOfBooks) {
           if (listOfBooks.connectionState == ConnectionState.done) {
             if (listOfBooks.hasError) {
-              print(listOfBooks.error);
-              print(listOfBooks.data);
               return ErrorStateBuilder();
             } else {
               return AnimatedBuilder(

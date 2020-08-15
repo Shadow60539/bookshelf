@@ -172,7 +172,6 @@ class BookPageBottomButtons extends StatelessWidget {
       int index,
       BuildContext context,
       ValueNotifier readingNotifier}) async {
-    print('---------------------${bookList[index].title}');
     var user = await FirebaseAuth.instance.currentUser();
     return await firestore
         .collection(UsersCollection)
