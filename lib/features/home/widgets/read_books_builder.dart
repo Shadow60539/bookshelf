@@ -12,6 +12,10 @@ import 'package:focused_menu/modals.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ReadBooksBuilder extends StatefulWidget {
+  final GlobalKey<ScaffoldState> scaffoldKey;
+
+  ReadBooksBuilder({this.scaffoldKey});
+
   @override
   _ReadBooksBuilderState createState() => _ReadBooksBuilderState();
 }
@@ -70,6 +74,17 @@ class _ReadBooksBuilderState extends State<ReadBooksBuilder> {
                     }
                   });
                   Navigator.pop(context);
+                  widget.scaffoldKey.currentState.showSnackBar(SnackBar(
+                    content: Text(
+                      'Cleared reading list',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          .copyWith(color: Colors.white),
+                    ),
+                    backgroundColor: kDarkBlue,
+                    duration: Duration(seconds: 1),
+                  ));
                 }),
           ],
         );
@@ -195,10 +210,22 @@ class _ReadBooksBuilderState extends State<ReadBooksBuilder> {
                                       ),
                                       onPressed: () async {
                                         await Firestore.instance
+                                            .collection(UsersCollection)
+                                            .document(userId)
                                             .collection(ReadCollection)
                                             .document(snapshot.data
                                                 .documents[index].documentID)
                                             .delete();
+                                        widget.scaffoldKey.currentState
+                                            .showSnackBar(SnackBar(
+                                          content: Text(
+                                            'Removed successfully',
+                                            style: style.copyWith(
+                                                color: Colors.white),
+                                          ),
+                                          backgroundColor: kDarkBlue,
+                                          duration: Duration(seconds: 1),
+                                        ));
                                       },
                                       trailingIcon: Icon(
                                         Icons.delete,
@@ -211,11 +238,15 @@ class _ReadBooksBuilderState extends State<ReadBooksBuilder> {
                                               color: Colors.black)),
                                       onPressed: () async {
                                         await Firestore.instance
+                                            .collection(UsersCollection)
+                                            .document(userId)
                                             .collection(ReadCollection)
                                             .document(snapshot.data
                                                 .documents[index].documentID)
                                             .delete();
                                         Firestore.instance
+                                            .collection(UsersCollection)
+                                            .document(userId)
                                             .collection(ReadingCollection)
                                             .add({
                                           'title': book.title,
@@ -226,6 +257,16 @@ class _ReadBooksBuilderState extends State<ReadBooksBuilder> {
                                           'desc': book.desc,
                                           'category': book.category
                                         });
+                                        widget.scaffoldKey.currentState
+                                            .showSnackBar(SnackBar(
+                                          content: Text(
+                                            'Moved to read next',
+                                            style: style.copyWith(
+                                                color: Colors.white),
+                                          ),
+                                          backgroundColor: kDarkBlue,
+                                          duration: Duration(seconds: 1),
+                                        ));
                                       },
                                       trailingIcon: Icon(
                                         FontAwesomeIcons.book,

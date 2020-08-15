@@ -213,9 +213,15 @@ class _DiscoverPageState extends State<DiscoverPage> {
                         scaffoldKey: _scaffoldKey,
                       ),
                       buildCategories(style),
-                      ReadingBooksBuilder(),
-                      WishListedBooksBuilder(),
-                      ReadBooksBuilder(),
+                      ReadingBooksBuilder(
+                        scaffoldKey: _scaffoldKey,
+                      ),
+                      WishListedBooksBuilder(
+                        scaffoldKey: _scaffoldKey,
+                      ),
+                      ReadBooksBuilder(
+                        scaffoldKey: _scaffoldKey,
+                      ),
                     ],
                   ),
                 ),

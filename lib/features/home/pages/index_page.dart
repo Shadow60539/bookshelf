@@ -37,7 +37,10 @@ class _IndexPageState extends State<IndexPage> {
               floatingActionButton: FloatingActionButton(
                 backgroundColor: kDarkBlue,
                 onPressed: () {
-                  Navigator.pushNamed(context, Router.seeAllBooksPage);
+                  Navigator.pushNamed(
+                    context,
+                    Router.seeAllBooksPage,
+                  );
                 },
                 child: Icon(FontAwesomeIcons.plus),
               ),

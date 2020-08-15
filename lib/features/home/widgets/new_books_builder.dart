@@ -7,7 +7,6 @@ import 'package:flutter_app/core/model/book.dart';
 import 'package:flutter_app/core/utils/colors.dart';
 import 'package:flutter_app/core/utils/dimens.dart';
 import 'package:flutter_app/core/utils/strings.dart';
-import 'package:flutter_app/features/home/pages/see_all_books_page.dart';
 import 'package:flutter_app/routes/router.gr.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
@@ -56,10 +55,10 @@ class NewBooksBuilder extends StatelessWidget {
                           fontSize: 30, color: CupertinoColors.black),
                     ),
                     GestureDetector(
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SeeAllBooksPage())),
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        Router.seeAllBooksPage,
+                      ),
                       child: Text(
                         'see all',
                         style: style.copyWith(color: kDarkBlue),

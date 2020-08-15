@@ -1,8 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/core/enums/document_present_absent.dart';
 import 'package:flutter_app/core/model/book.dart';
 import 'package:flutter_app/core/network/http_get_books.dart';
 import 'package:flutter_app/core/utils/colors.dart';
+import 'package:flutter_app/core/utils/strings.dart';
 import 'package:flutter_app/core/widgets/error_state.dart';
 import 'package:flutter_app/core/widgets/loading_widget.dart';
 import 'package:flutter_app/routes/router.gr.dart';
@@ -21,9 +25,15 @@ class SeeAllBooksPage extends StatefulWidget {
 
 class _SeeAllBooksPageState extends State<SeeAllBooksPage>
     with SingleTickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   ValueNotifier<int> _currentTab;
   TabController _tabController;
   Future<List<List<Book>>> _future;
+  ValueNotifier<Document> _wishlistNotifier =
+      ValueNotifier<Document>(Document.absent);
+  ValueNotifier<Document> _readingNotifier =
+      ValueNotifier<Document>(Document.absent);
+  Firestore _firestore = Firestore.instance;
 
   @override
   void initState() {
@@ -77,6 +87,120 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
     );
   }
 
+  Future<Null> _addToWishList(
+      {Firestore firestore,
+      TextStyle style,
+      int index,
+      List<Book> bookList,
+      BuildContext context,
+      ValueNotifier wishlistNotifier}) async {
+    var user = await FirebaseAuth.instance.currentUser();
+    return await firestore
+        .collection(UsersCollection)
+        .document(user.uid)
+        .collection(WishListCollection)
+        .getDocuments()
+        .then((snapshot) {
+      for (var ds in snapshot.documents) {
+        if (ds.data['imgUrl'] == bookList[index].imgUrl) {
+          wishlistNotifier.value = Document.present;
+          break;
+        } else {
+          wishlistNotifier.value = Document.absent;
+        }
+      }
+      if (wishlistNotifier.value == Document.present) {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text(
+            'Book already exist',
+            style: style.copyWith(color: Colors.white),
+          ),
+          backgroundColor: kDarkBlue,
+          duration: Duration(seconds: 1),
+        ));
+      } else {
+        firestore
+            .collection(UsersCollection)
+            .document(user.uid)
+            .collection(WishListCollection)
+            .add({
+          'title': bookList[index].title,
+          'author': bookList[index].author,
+          'imgUrl': bookList[index].imgUrl,
+          'language': bookList[index].language,
+          'pages': bookList[index].pages,
+          'desc': bookList[index].desc,
+          'category': bookList[index].category
+        });
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text(
+            'Added to wishlist',
+            style: style.copyWith(color: Colors.white),
+          ),
+          backgroundColor: kDarkBlue,
+          duration: Duration(seconds: 1),
+        ));
+      }
+    });
+  }
+
+  Future<Null> _addToReadingList(
+      {Firestore firestore,
+      TextStyle style,
+      int index,
+      List<Book> bookList,
+      BuildContext context,
+      ValueNotifier readingNotifier}) async {
+    var user = await FirebaseAuth.instance.currentUser();
+    return await firestore
+        .collection(UsersCollection)
+        .document(user.uid)
+        .collection(ReadingCollection)
+        .getDocuments()
+        .then((snapshot) {
+      for (var ds in snapshot.documents) {
+        if (ds.data['imgUrl'] == bookList[index].imgUrl) {
+          readingNotifier.value = Document.present;
+          break;
+        } else {
+          readingNotifier.value = Document.absent;
+        }
+      }
+      if (readingNotifier.value == Document.present) {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text(
+            'Book already exist',
+            style: style.copyWith(color: Colors.white),
+          ),
+          backgroundColor: kDarkBlue,
+          duration: Duration(seconds: 1),
+        ));
+      } else {
+        firestore
+            .collection(UsersCollection)
+            .document(user.uid)
+            .collection(ReadingCollection)
+            .add({
+          'title': bookList[index].title,
+          'author': bookList[index].author,
+          'imgUrl': bookList[index].imgUrl,
+          'language': bookList[index].language,
+          'pages': bookList[index].pages,
+          'desc': bookList[index].desc,
+          'category': bookList[index].category
+        });
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text(
+            'Added to reading list',
+            style: style.copyWith(color: Colors.white),
+          ),
+          backgroundColor: kDarkBlue,
+          duration: Duration(seconds: 1),
+        ));
+      }
+    });
+  }
+
   Widget bookBuilder({List<Book> books, int index, TextStyle style}) {
     return FocusedMenuHolder(
       menuWidth: 170,
@@ -84,7 +208,14 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
         FocusedMenuItem(
             title: Text('Add to wish list',
                 style: style.copyWith(color: Colors.black)),
-            onPressed: () {},
+            onPressed: () {
+              _addToWishList(
+                  firestore: _firestore,
+                  index: index,
+                  style: style,
+                  wishlistNotifier: _wishlistNotifier,
+                  bookList: books);
+            },
             trailingIcon: Icon(
               FontAwesomeIcons.bookmark,
               size: 16,
@@ -92,7 +223,14 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
         FocusedMenuItem(
             title: Text('Add to read next',
                 style: style.copyWith(color: Colors.black)),
-            onPressed: () {},
+            onPressed: () {
+              _addToReadingList(
+                  firestore: _firestore,
+                  index: index,
+                  style: style,
+                  readingNotifier: _readingNotifier,
+                  bookList: books);
+            },
             trailingIcon: Icon(
               FontAwesomeIcons.book,
               size: 16,
@@ -143,9 +281,12 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
               print(listOfBooks.data);
               return ErrorStateBuilder();
             } else {
-              return ValueListenableBuilder(
-                builder: (BuildContext context, value, Widget child) {
+              return AnimatedBuilder(
+                animation: Listenable.merge(
+                    [_readingNotifier, _wishlistNotifier, _currentTab]),
+                builder: (BuildContext context, Widget child) {
                   return Scaffold(
+                    key: _scaffoldKey,
                     appBar: AppBar(
                       elevation: 0,
                       backgroundColor: Colors.transparent,
@@ -279,7 +420,6 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
                     ),
                   );
                 },
-                valueListenable: _currentTab,
               );
             }
           } else

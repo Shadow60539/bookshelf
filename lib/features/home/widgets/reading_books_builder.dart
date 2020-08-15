@@ -13,6 +13,10 @@ import 'package:focused_menu/modals.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ReadingBooksBuilder extends StatefulWidget {
+  final GlobalKey<ScaffoldState> scaffoldKey;
+
+  ReadingBooksBuilder({this.scaffoldKey});
+
   @override
   _ReadingBooksBuilderState createState() => _ReadingBooksBuilderState();
 }
@@ -71,6 +75,17 @@ class _ReadingBooksBuilderState extends State<ReadingBooksBuilder> {
                     }
                   });
                   Navigator.pop(context);
+                  widget.scaffoldKey.currentState.showSnackBar(SnackBar(
+                    content: Text(
+                      'Cleared reading list',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          .copyWith(color: Colors.white),
+                    ),
+                    backgroundColor: kDarkBlue,
+                    duration: Duration(seconds: 1),
+                  ));
                 }),
           ],
         );
@@ -202,6 +217,16 @@ class _ReadingBooksBuilderState extends State<ReadingBooksBuilder> {
                                             .document(snapshot.data
                                                 .documents[index].documentID)
                                             .delete();
+                                        widget.scaffoldKey.currentState
+                                            .showSnackBar(SnackBar(
+                                          content: Text(
+                                            'Removed successfully',
+                                            style: style.copyWith(
+                                                color: Colors.white),
+                                          ),
+                                          backgroundColor: kDarkBlue,
+                                          duration: Duration(seconds: 1),
+                                        ));
                                       },
                                       trailingIcon: Icon(
                                         Icons.delete,
@@ -209,7 +234,7 @@ class _ReadingBooksBuilderState extends State<ReadingBooksBuilder> {
                                       ),
                                       backgroundColor: Colors.red),
                                   FocusedMenuItem(
-                                      title: Text('Add to wishlist',
+                                      title: Text('Move to wishlist',
                                           style: style.copyWith(
                                               color: Colors.black)),
                                       onPressed: () async {
@@ -233,6 +258,16 @@ class _ReadingBooksBuilderState extends State<ReadingBooksBuilder> {
                                           'desc': book.desc,
                                           'category': book.category
                                         });
+                                        widget.scaffoldKey.currentState
+                                            .showSnackBar(SnackBar(
+                                          content: Text(
+                                            'Moved to wishlist',
+                                            style: style.copyWith(
+                                                color: Colors.white),
+                                          ),
+                                          backgroundColor: kDarkBlue,
+                                          duration: Duration(seconds: 1),
+                                        ));
                                       },
                                       trailingIcon: Icon(
                                         FontAwesomeIcons.book,
@@ -263,6 +298,16 @@ class _ReadingBooksBuilderState extends State<ReadingBooksBuilder> {
                                           'desc': book.desc,
                                           'category': book.category
                                         });
+                                        widget.scaffoldKey.currentState
+                                            .showSnackBar(SnackBar(
+                                          content: Text(
+                                            'Keep going read more',
+                                            style: style.copyWith(
+                                                color: Colors.white),
+                                          ),
+                                          backgroundColor: kDarkBlue,
+                                          duration: Duration(seconds: 1),
+                                        ));
                                       },
                                       trailingIcon: Icon(
                                         FontAwesomeIcons.check,

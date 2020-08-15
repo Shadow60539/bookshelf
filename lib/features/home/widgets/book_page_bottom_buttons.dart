@@ -57,12 +57,10 @@ class BookPageBottomButtons extends StatelessWidget {
                               onPressed: () {
                                 _addToReadingList(
                                     index: index,
+                                    context: context,
                                     style: style,
                                     firestore: _firestore,
                                     readingNotifier: _readingNotifier);
-                                Future.delayed(Duration(seconds: 1), () {
-                                  Navigator.pop(context);
-                                });
                               },
                               color: kDarkBlue,
                             ))),
@@ -93,14 +91,11 @@ class BookPageBottomButtons extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(5)),
                               onPressed: () {
                                 _addToWishList(
+                                    context: context,
                                     index: index,
                                     style: style,
                                     firestore: _firestore,
                                     wishlistNotifier: _readingNotifier);
-
-                                Future.delayed(Duration(seconds: 1), () {
-                                  Navigator.pop(context);
-                                });
                               },
                               color: Colors.white,
                             ))),
@@ -115,6 +110,7 @@ class BookPageBottomButtons extends StatelessWidget {
       {Firestore firestore,
       TextStyle style,
       int index,
+      BuildContext context,
       ValueNotifier wishlistNotifier}) async {
     var user = await FirebaseAuth.instance.currentUser();
     return await firestore
@@ -162,6 +158,10 @@ class BookPageBottomButtons extends StatelessWidget {
           backgroundColor: kDarkBlue,
           duration: Duration(seconds: 1),
         ));
+
+        Future.delayed(Duration(seconds: 1), () {
+          Navigator.pop(context);
+        });
       }
     });
   }
@@ -170,6 +170,7 @@ class BookPageBottomButtons extends StatelessWidget {
       {Firestore firestore,
       TextStyle style,
       int index,
+      BuildContext context,
       ValueNotifier readingNotifier}) async {
     print('---------------------${bookList[index].title}');
     var user = await FirebaseAuth.instance.currentUser();
@@ -218,6 +219,9 @@ class BookPageBottomButtons extends StatelessWidget {
           backgroundColor: kDarkBlue,
           duration: Duration(seconds: 1),
         ));
+        Future.delayed(Duration(seconds: 1), () {
+          Navigator.pop(context);
+        });
       }
     });
   }
