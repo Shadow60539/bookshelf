@@ -16,12 +16,14 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage>
     with SingleTickerProviderStateMixin {
   final _auth = FirebaseAuth.instance;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   AnimationController _animationController;
   String email;
   String password;
   String errorMsg;
   bool _loading = false;
   bool _showPassword = false;
+  bool _autoValidate = false;
   Color _emailBorderColor = Colors.white;
   Color _passwordBorderColor = Colors.white;
 
@@ -85,6 +87,13 @@ class _SplashPageState extends State<SplashPage>
         });
         return 'No user with this email';
         break;
+      case 'ERROR_INVALID_EMAIL':
+        setState(() {
+          _passwordBorderColor = Colors.white;
+          _emailBorderColor = Colors.red;
+        });
+        return 'Invalid Email';
+        break;
       case 'Sign In':
         return 'Sign In Again';
         break;
@@ -136,22 +145,30 @@ class _SplashPageState extends State<SplashPage>
                   onPressed: () async {
                     if (_animationController.status ==
                         AnimationStatus.completed) {
-                      try {
-                        setState(() {
-                          _loading = true;
-                        });
-                        await _auth.signInWithEmailAndPassword(
-                            email: email, password: password);
-                      } catch (e) {
-                        PlatformException error = e as PlatformException;
-                        setState(() {
-                          errorMsg = error.code;
-                          _loading = false;
-                        });
-                        Future.delayed(Duration(seconds: 3), () {
+                      if (_formKey.currentState.validate()) {
+                        _formKey.currentState.save();
+                        try {
                           setState(() {
-                            errorMsg = 'Sign In';
+                            _loading = true;
                           });
+                          await _auth.signInWithEmailAndPassword(
+                              email: email, password: password);
+                          Navigator.pushNamed(context, Router.indexPage);
+                        } catch (e) {
+                          PlatformException error = e as PlatformException;
+                          setState(() {
+                            errorMsg = error.code;
+                            _loading = false;
+                          });
+                          Future.delayed(Duration(seconds: 3), () {
+                            setState(() {
+                              errorMsg = 'Sign In';
+                            });
+                          });
+                        }
+                      } else {
+                        setState(() {
+                          _autoValidate = true;
                         });
                       }
                     } else {
@@ -253,94 +270,110 @@ class _SplashPageState extends State<SplashPage>
   Widget _form(context) {
     EdgeInsetsGeometry padding =
         EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom * 0);
-    return Container(
-      height: 170,
-      margin: EdgeInsets.symmetric(horizontal: 50),
-      child: ListView(
-        padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom, top: 50),
-        children: <Widget>[
-          Container(
-            alignment: Alignment.center,
-            height: 50.0,
-            margin: EdgeInsets.only(bottom: 20),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Icon(
-                  FontAwesomeIcons.solidEnvelope,
-                  color: Colors.white,
-                  size: 16,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Flexible(
-                  child: TextFormField(
-                    cursorColor: Colors.white,
-                    keyboardType: TextInputType.emailAddress,
-                    style: TextStyle(color: Colors.white),
-                    scrollPadding: padding,
-                    decoration: _textFieldDecoration(
-                        label: 'Email', borderColor: _emailBorderColor),
-                    autocorrect: false,
-                    onChanged: (value) {
-                      email = value;
-                    },
+    return Form(
+      key: _formKey,
+      autovalidate: _autoValidate,
+      child: Container(
+        height: 170,
+        margin: EdgeInsets.symmetric(horizontal: 50),
+        child: ListView(
+          padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom, top: 50),
+          children: <Widget>[
+            Container(
+              alignment: Alignment.center,
+              height: 50.0,
+              margin: EdgeInsets.only(bottom: 20),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    FontAwesomeIcons.solidEnvelope,
+                    color: Colors.white,
+                    size: 16,
                   ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            height: 50.0,
-            margin: EdgeInsets.only(bottom: 20),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Icon(
-                  FontAwesomeIcons.lock,
-                  color: Colors.white,
-                  size: 16,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Flexible(
-                  child: TextFormField(
-                    scrollPadding: padding,
-                    cursorColor: Colors.white,
-                    style: TextStyle(color: Colors.white),
-                    obscureText: !_showPassword,
-                    decoration: _textFieldDecoration(
-                            label: 'Password',
-                            borderColor: _passwordBorderColor)
-                        .copyWith(
-                            suffixIcon: IconButton(
-                                iconSize: 14,
-                                color: Colors.white,
-                                icon: !_showPassword
-                                    ? Icon(FontAwesomeIcons.eyeSlash)
-                                    : Icon(FontAwesomeIcons.eye),
-                                onPressed: () {
-                                  setState(() {
-                                    _showPassword = !_showPassword;
-                                  });
-                                })),
-                    autocorrect: false,
-                    onChanged: (value) {
-                      password = value;
-                    },
+                  SizedBox(
+                    width: 10,
                   ),
-                ),
-              ],
+                  Flexible(
+                    child: TextFormField(
+                      cursorColor: Colors.white,
+                      keyboardType: TextInputType.emailAddress,
+                      style: TextStyle(color: Colors.white),
+                      scrollPadding: padding,
+                      decoration: _textFieldDecoration(
+                          label: 'Email', borderColor: _emailBorderColor),
+                      autocorrect: false,
+                      onSaved: (value) {
+                        email = value;
+                      },
+                      validator: (String arg) {
+                        if (arg.length < 1)
+                          return 'Forgot to enter email ?';
+                        else
+                          return null;
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            Container(
+              height: 50.0,
+              margin: EdgeInsets.only(bottom: 20),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    FontAwesomeIcons.lock,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Flexible(
+                    child: TextFormField(
+                      scrollPadding: padding,
+                      cursorColor: Colors.white,
+                      style: TextStyle(color: Colors.white),
+                      obscureText: !_showPassword,
+                      decoration: _textFieldDecoration(
+                              label: 'Password',
+                              borderColor: _passwordBorderColor)
+                          .copyWith(
+                              suffixIcon: IconButton(
+                                  iconSize: 14,
+                                  color: Colors.white,
+                                  icon: !_showPassword
+                                      ? Icon(FontAwesomeIcons.eyeSlash)
+                                      : Icon(FontAwesomeIcons.eye),
+                                  onPressed: () {
+                                    setState(() {
+                                      _showPassword = !_showPassword;
+                                    });
+                                  })),
+                      autocorrect: false,
+                      validator: (String arg) {
+                        if (arg.length < 1)
+                          return 'Forgot to enter password ?';
+                        else
+                          return null;
+                      },
+                      onSaved: (value) {
+                        password = value;
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

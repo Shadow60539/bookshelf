@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/core/model/book.dart';
@@ -10,50 +11,133 @@ import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class ReadingBooksBuilder extends StatelessWidget {
+class ReadingBooksBuilder extends StatefulWidget {
+  @override
+  _ReadingBooksBuilderState createState() => _ReadingBooksBuilderState();
+}
+
+class _ReadingBooksBuilderState extends State<ReadingBooksBuilder> {
+  FirebaseAuth user = FirebaseAuth.instance;
+  String userId = "";
+  @override
+  void initState() {
+    user.currentUser().then((value) {
+      if (user != null) {
+        setState(() {
+          userId = value.uid;
+        });
+      }
+    });
+    super.initState();
+  }
+
+  clearAll() {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          content: Text(
+            'Are you sure you want to clear all books',
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+          title: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Text(
+              'Warning',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  .copyWith(fontWeight: FontWeight.bold, fontSize: 15),
+            ),
+          ),
+          actions: <Widget>[
+            CupertinoButton(
+                child: Text('No'),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+            CupertinoButton(
+                child: Text('Yes'),
+                onPressed: () {
+                  Firestore.instance
+                      .collection(UsersCollection)
+                      .document(userId)
+                      .collection(ReadingCollection)
+                      .getDocuments()
+                      .then((snapshot) {
+                    for (DocumentSnapshot ds in snapshot.documents) {
+                      ds.reference.delete();
+                    }
+                  });
+                  Navigator.pop(context);
+                }),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.bodyText1;
-    return Container(
-      margin: EdgeInsets.only(top: 820, right: 30),
-      height: booksCardHolderHeight,
-      width: double.maxFinite,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(30), bottomRight: Radius.circular(30)),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(color: Colors.black12, spreadRadius: 10, blurRadius: 20)
-          ]),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              'Continue Reading',
-              style: style.copyWith(fontSize: 30, color: CupertinoColors.black),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Text(
-              'Hunt new books before other bookworms do it',
-              style: style.copyWith(color: Colors.black54),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            LimitedBox(
-              maxHeight: booksCardHolderLimitedHeight,
-              child: StreamBuilder<QuerySnapshot>(
-                stream: Firestore.instance
-                    .collection(ReadingCollection)
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasData)
-                    return ListView.builder(
+    return StreamBuilder(
+      stream: Firestore.instance
+          .collection(UsersCollection)
+          .document(userId)
+          .collection(ReadingCollection)
+          .snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasData) {
+          return Container(
+            margin: EdgeInsets.only(top: 820, right: 30),
+            height: booksCardHolderHeight,
+            width: double.maxFinite,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(30),
+                    bottomRight: Radius.circular(30)),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black12, spreadRadius: 10, blurRadius: 20)
+                ]),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        'Continue Reading',
+                        style: style.copyWith(
+                            fontSize: 30, color: CupertinoColors.black),
+                      ),
+                      snapshot.data.documents.isEmpty
+                          ? Container()
+                          : GestureDetector(
+                              onTap: clearAll,
+                              child: Text(
+                                'Clear',
+                                style: style.copyWith(color: kDarkBlue),
+                              ),
+                            )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    'Hunt new books before other bookworms do it',
+                    style: style.copyWith(color: Colors.black54),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  LimitedBox(
+                    maxHeight: booksCardHolderLimitedHeight,
+                    child: ListView.builder(
                       reverse: true,
                       scrollDirection: Axis.horizontal,
                       itemCount: snapshot.data.documents.length,
@@ -91,6 +175,8 @@ class ReadingBooksBuilder extends StatelessWidget {
                                 ),
                                 onPressed: () async {
                                   await Firestore.instance
+                                      .collection(UsersCollection)
+                                      .document(userId)
                                       .collection(ReadingCollection)
                                       .document(snapshot
                                           .data.documents[index].documentID)
@@ -106,11 +192,15 @@ class ReadingBooksBuilder extends StatelessWidget {
                                     style: style.copyWith(color: Colors.black)),
                                 onPressed: () async {
                                   await Firestore.instance
+                                      .collection(UsersCollection)
+                                      .document(userId)
                                       .collection(ReadingCollection)
                                       .document(snapshot
                                           .data.documents[index].documentID)
                                       .delete();
                                   Firestore.instance
+                                      .collection(UsersCollection)
+                                      .document(userId)
                                       .collection(WishListCollection)
                                       .add({
                                     'title': book.title,
@@ -131,11 +221,15 @@ class ReadingBooksBuilder extends StatelessWidget {
                                     style: style.copyWith(color: Colors.black)),
                                 onPressed: () async {
                                   await Firestore.instance
+                                      .collection(UsersCollection)
+                                      .document(userId)
                                       .collection(ReadingCollection)
                                       .document(snapshot
                                           .data.documents[index].documentID)
                                       .delete();
                                   Firestore.instance
+                                      .collection(UsersCollection)
+                                      .document(userId)
                                       .collection(ReadCollection)
                                       .add({
                                     'title': book.title,
@@ -198,16 +292,17 @@ class ReadingBooksBuilder extends StatelessWidget {
                           ),
                         );
                       },
-                    );
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
+          );
+        }
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 }

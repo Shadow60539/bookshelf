@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/core/enums/document_present_absent.dart';
@@ -105,7 +106,6 @@ class NewBooksBuilder extends StatelessWidget {
                               style: style.copyWith(color: Colors.black),
                             ),
                             onPressed: () {
-                              books.removeAt(index);
                               _addToReadingList(
                                   index: index,
                                   style: style,
@@ -180,7 +180,10 @@ class NewBooksBuilder extends StatelessWidget {
       TextStyle style,
       int index,
       ValueNotifier wishlistNotifier}) async {
+    var user = await FirebaseAuth.instance.currentUser();
     return await firestore
+        .collection(UsersCollection)
+        .document(user.uid)
         .collection(WishListCollection)
         .getDocuments()
         .then((snapshot) {
@@ -202,7 +205,11 @@ class NewBooksBuilder extends StatelessWidget {
           duration: Duration(seconds: 1),
         ));
       } else {
-        firestore.collection(WishListCollection).add({
+        firestore
+            .collection(UsersCollection)
+            .document(user.uid)
+            .collection(WishListCollection)
+            .add({
           'title': books[index].title,
           'author': books[index].author,
           'imgUrl': books[index].imgUrl,
@@ -228,7 +235,11 @@ class NewBooksBuilder extends StatelessWidget {
       TextStyle style,
       int index,
       ValueNotifier readingNotifier}) async {
+    print('---------------------${books[index].title}');
+    var user = await FirebaseAuth.instance.currentUser();
     return await firestore
+        .collection(UsersCollection)
+        .document(user.uid)
         .collection(ReadingCollection)
         .getDocuments()
         .then((snapshot) {
@@ -250,7 +261,11 @@ class NewBooksBuilder extends StatelessWidget {
           duration: Duration(seconds: 1),
         ));
       } else {
-        firestore.collection(ReadingCollection).add({
+        firestore
+            .collection(UsersCollection)
+            .document(user.uid)
+            .collection(ReadingCollection)
+            .add({
           'title': books[index].title,
           'author': books[index].author,
           'imgUrl': books[index].imgUrl,

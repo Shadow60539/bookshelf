@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/core/model/book.dart';
@@ -10,64 +11,134 @@ import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class WishListedBooksBuilder extends StatelessWidget {
+class WishListedBooksBuilder extends StatefulWidget {
+  @override
+  _WishListedBooksBuilderState createState() => _WishListedBooksBuilderState();
+}
+
+class _WishListedBooksBuilderState extends State<WishListedBooksBuilder> {
+  FirebaseAuth user = FirebaseAuth.instance;
+  String userId = "";
+  @override
+  void initState() {
+    user.currentUser().then((value) {
+      if (user != null) {
+        setState(() {
+          userId = value.uid;
+        });
+      }
+    });
+    super.initState();
+  }
+
+  clearAll() {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          content: Text(
+            'Are you sure you want to clear all books',
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+          title: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Text(
+              'Warning',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  .copyWith(fontWeight: FontWeight.bold, fontSize: 15),
+            ),
+          ),
+          actions: <Widget>[
+            CupertinoButton(
+                child: Text('No'),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+            CupertinoButton(
+                child: Text('Yes'),
+                onPressed: () {
+                  Firestore.instance
+                      .collection(UsersCollection)
+                      .document(userId)
+                      .collection(WishListCollection)
+                      .getDocuments()
+                      .then((snapshot) {
+                    for (DocumentSnapshot ds in snapshot.documents) {
+                      ds.reference.delete();
+                    }
+                  });
+                  Navigator.pop(context);
+                }),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.bodyText1;
 
-    return Container(
-      margin: EdgeInsets.only(top: 1200, left: 30),
-      height: booksCardHolderHeight,
-      width: double.maxFinite,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30), bottomLeft: Radius.circular(30)),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(color: Colors.black12, spreadRadius: 10, blurRadius: 20)
-          ]),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  'Wishlisted',
-                  style: style.copyWith(
-                      fontSize: 30, color: CupertinoColors.black),
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Text(
-                    'Clear',
-                    style: style.copyWith(color: kDarkBlue),
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firestore.instance
+          .collection(UsersCollection)
+          .document(userId)
+          .collection(WishListCollection)
+          .snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasData) {
+          return Container(
+            margin: EdgeInsets.only(top: 1200, left: 30),
+            height: booksCardHolderHeight,
+            width: double.maxFinite,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    bottomLeft: Radius.circular(30)),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black12, spreadRadius: 10, blurRadius: 20)
+                ]),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        'Wishlisted',
+                        style: style.copyWith(
+                            fontSize: 30, color: CupertinoColors.black),
+                      ),
+                      snapshot.data.documents.isEmpty
+                          ? Container()
+                          : GestureDetector(
+                              onTap: clearAll,
+                              child: Text(
+                                'Clear',
+                                style: style.copyWith(color: kDarkBlue),
+                              ),
+                            )
+                    ],
                   ),
-                )
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Text(
-              'Hunt new books before other bookworms do it',
-              style: style.copyWith(color: Colors.black54),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            LimitedBox(
-              maxHeight: booksCardHolderLimitedHeight,
-              child: StreamBuilder<QuerySnapshot>(
-                stream: Firestore.instance
-                    .collection(WishListCollection)
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasData)
-                    return ListView.builder(
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    'Hunt new books before other bookworms do it',
+                    style: style.copyWith(color: Colors.black54),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  LimitedBox(
+                    maxHeight: booksCardHolderLimitedHeight,
+                    child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: snapshot.data.documents.length,
                       itemBuilder: (BuildContext context, int index) {
@@ -104,6 +175,8 @@ class WishListedBooksBuilder extends StatelessWidget {
                                 ),
                                 onPressed: () async {
                                   await Firestore.instance
+                                      .collection(UsersCollection)
+                                      .document(userId)
                                       .collection(WishListCollection)
                                       .document(snapshot
                                           .data.documents[index].documentID)
@@ -119,11 +192,15 @@ class WishListedBooksBuilder extends StatelessWidget {
                                     style: style.copyWith(color: Colors.black)),
                                 onPressed: () async {
                                   await Firestore.instance
+                                      .collection(UsersCollection)
+                                      .document(userId)
                                       .collection(WishListCollection)
                                       .document(snapshot
                                           .data.documents[index].documentID)
                                       .delete();
                                   Firestore.instance
+                                      .collection(UsersCollection)
+                                      .document(userId)
                                       .collection(ReadingCollection)
                                       .add({
                                     'title': book.title,
@@ -185,16 +262,17 @@ class WishListedBooksBuilder extends StatelessWidget {
                           ),
                         );
                       },
-                    );
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
+          );
+        }
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 }

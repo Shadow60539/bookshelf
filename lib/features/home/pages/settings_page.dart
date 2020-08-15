@@ -1,11 +1,22 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/core/utils/colors.dart';
 import 'package:flutter_app/core/utils/strings.dart';
+import 'package:flutter_app/routes/router.gr.dart';
 
 class SettingsPage extends StatelessWidget {
+  getUserName() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    var sh = await Firestore.instance
+        .collection('userName')
+        .document(user.uid)
+        .get();
+    return sh;
+  }
+
   @override
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.bodyText1;
@@ -29,12 +40,31 @@ class SettingsPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Text(
-                    'Hello Bibliophile',
-                    style: style.copyWith(color: Colors.black, fontSize: 20),
-                  ),
+                FutureBuilder(
+                  builder:
+                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                    if (snapshot.hasData) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Text(
+                          //TODO:Remember
+                          'Hello Sir',
+                          style:
+                              style.copyWith(color: Colors.black, fontSize: 20),
+                        ),
+                      );
+                    } else {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Text(
+                          'Hello Bibliophile',
+                          style:
+                              style.copyWith(color: Colors.black, fontSize: 20),
+                        ),
+                      );
+                    }
+                  },
+                  future: getUserName(),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 30),
@@ -107,6 +137,7 @@ class SettingsPage extends StatelessWidget {
                     iconData: Icons.exit_to_app,
                     onTap: () async {
                       await FirebaseAuth.instance.signOut();
+                      Navigator.pushNamed(context, Router.rootPage);
                     }),
               ],
             ),
