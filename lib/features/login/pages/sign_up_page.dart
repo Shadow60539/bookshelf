@@ -129,12 +129,11 @@ class _SignUpPageState extends State<SignUpPage> {
                               setState(() {
                                 _loading = false;
                               });
-                              final user =
-                                  await FirebaseAuth.instance.currentUser();
-                              Firestore.instance
+                              final user = FirebaseAuth.instance.currentUser;
+                              FirebaseFirestore.instance
                                   .collection('userName')
-                                  .document(user.uid)
-                                  .setData({'userName': userName});
+                                  .doc(user.uid)
+                                  .set({'userName': userName});
                               Navigator.pushReplacementNamed(
                                   context, Router.indexPage);
                             }

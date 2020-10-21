@@ -9,10 +9,10 @@ import 'package:flutter_app/core/utils/strings.dart';
 
 class SettingsPage extends StatelessWidget {
   getUserName() async {
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    var sh = await Firestore.instance
+    User user = FirebaseAuth.instance.currentUser;
+    var sh = await FirebaseFirestore.instance
         .collection('userName')
-        .document(user.uid)
+        .doc(user.uid)
         .get();
     return sh;
   }

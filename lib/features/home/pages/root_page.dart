@@ -6,8 +6,8 @@ import 'package:flutter_app/features/splash/pages/splash_page.dart';
 class RootPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<FirebaseUser>(
-      builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) {
+    return StreamBuilder<User>(
+      builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           if (!snapshot.hasData)
             return SplashPage();
@@ -16,7 +16,7 @@ class RootPage extends StatelessWidget {
         } else
           return Scaffold();
       },
-      stream: FirebaseAuth.instance.onAuthStateChanged,
+      stream: FirebaseAuth.instance.authStateChanges(),
     );
   }
 }

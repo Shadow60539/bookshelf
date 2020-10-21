@@ -25,13 +25,11 @@ class _ReadBooksBuilderState extends State<ReadBooksBuilder> {
   String userId = "uid";
   @override
   void initState() {
-    user.currentUser().then((value) {
-      if (user != null) {
-        setState(() {
-          userId = value.uid;
-        });
-      }
-    });
+    if (user != null) {
+      setState(() {
+        userId = user.currentUser.uid;
+      });
+    }
     super.initState();
   }
 
@@ -63,13 +61,13 @@ class _ReadBooksBuilderState extends State<ReadBooksBuilder> {
             CupertinoButton(
                 child: Text('Yes'),
                 onPressed: () {
-                  Firestore.instance
+                  FirebaseFirestore.instance
                       .collection(UsersCollection)
-                      .document(userId)
+                      .doc(userId)
                       .collection(ReadCollection)
-                      .getDocuments()
+                      .get()
                       .then((snapshot) {
-                    for (DocumentSnapshot ds in snapshot.documents) {
+                    for (DocumentSnapshot ds in snapshot.docs) {
                       ds.reference.delete();
                     }
                   });
@@ -96,9 +94,9 @@ class _ReadBooksBuilderState extends State<ReadBooksBuilder> {
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.bodyText1;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection(UsersCollection)
-          .document(userId)
+          .doc(userId)
           .collection(ReadCollection)
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -129,7 +127,7 @@ class _ReadBooksBuilderState extends State<ReadBooksBuilder> {
                         style: style.copyWith(
                             fontSize: 30, color: CupertinoColors.black),
                       ),
-                      snapshot.data.documents.isEmpty
+                      snapshot.data.docs.isEmpty
                           ? Container()
                           : GestureDetector(
                               onTap: clearAll,
@@ -152,7 +150,7 @@ class _ReadBooksBuilderState extends State<ReadBooksBuilder> {
                   ),
                   LimitedBox(
                     maxHeight: booksCardHolderLimitedHeight,
-                    child: snapshot.data.documents.isEmpty
+                    child: snapshot.data.docs.isEmpty
                         ? Align(
                             alignment: Alignment.center,
                             child: Column(
@@ -175,20 +173,20 @@ class _ReadBooksBuilderState extends State<ReadBooksBuilder> {
                         : ListView.builder(
                             reverse: true,
                             scrollDirection: Axis.horizontal,
-                            itemCount: snapshot.data.documents.length,
+                            itemCount: snapshot.data.docs.length,
                             itemBuilder: (BuildContext context, int index) {
                               Map<String, dynamic> readingBookData =
-                                  snapshot.data.documents[index].data;
+                                  snapshot.data.docs[index].data();
                               List<Book> books = [];
-                              snapshot.data.documents.forEach((element) {
+                              snapshot.data.docs.forEach((element) {
                                 Book book = Book(
-                                    title: element.data['title'],
-                                    author: element.data['author'],
-                                    imgUrl: element.data['imgUrl'],
-                                    desc: element.data['desc'],
-                                    language: element.data['language'],
-                                    category: element.data['category'],
-                                    pages: element.data['pages']);
+                                    title: element.data()['title'],
+                                    author: element.data()['author'],
+                                    imgUrl: element.data()['imgUrl'],
+                                    desc: element.data()['desc'],
+                                    language: element.data()['language'],
+                                    category: element.data()['category'],
+                                    pages: element.data()['pages']);
                                 books.add(book);
                               });
                               Book book = Book(
@@ -209,12 +207,11 @@ class _ReadBooksBuilderState extends State<ReadBooksBuilder> {
                                             color: CupertinoColors.white),
                                       ),
                                       onPressed: () async {
-                                        await Firestore.instance
+                                        await FirebaseFirestore.instance
                                             .collection(UsersCollection)
-                                            .document(userId)
+                                            .doc(userId)
                                             .collection(ReadCollection)
-                                            .document(snapshot.data
-                                                .documents[index].documentID)
+                                            .doc(snapshot.data.docs[index].id)
                                             .delete();
                                         widget.scaffoldKey.currentState
                                             .showSnackBar(SnackBar(
@@ -237,16 +234,15 @@ class _ReadBooksBuilderState extends State<ReadBooksBuilder> {
                                           style: style.copyWith(
                                               color: Colors.black)),
                                       onPressed: () async {
-                                        await Firestore.instance
+                                        await FirebaseFirestore.instance
                                             .collection(UsersCollection)
-                                            .document(userId)
+                                            .doc(userId)
                                             .collection(ReadCollection)
-                                            .document(snapshot.data
-                                                .documents[index].documentID)
+                                            .doc(snapshot.data.docs[index].id)
                                             .delete();
-                                        Firestore.instance
+                                        FirebaseFirestore.instance
                                             .collection(UsersCollection)
-                                            .document(userId)
+                                            .doc(userId)
                                             .collection(ReadingCollection)
                                             .add({
                                           'title': book.title,

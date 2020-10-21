@@ -33,7 +33,7 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
       ValueNotifier<Document>(Document.absent);
   ValueNotifier<Document> _readingNotifier =
       ValueNotifier<Document>(Document.absent);
-  Firestore _firestore = Firestore.instance;
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void initState() {
@@ -100,21 +100,21 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
   }
 
   Future<Null> _addToWishList(
-      {Firestore firestore,
+      {FirebaseFirestore firestore,
       TextStyle style,
       int index,
       List<Book> bookList,
       BuildContext context,
       ValueNotifier wishlistNotifier}) async {
-    var user = await FirebaseAuth.instance.currentUser();
+    var user = FirebaseAuth.instance.currentUser;
     return await firestore
         .collection(UsersCollection)
-        .document(user.uid)
+        .doc(user.uid)
         .collection(WishListCollection)
-        .getDocuments()
+        .get()
         .then((snapshot) {
-      for (var ds in snapshot.documents) {
-        if (ds.data['imgUrl'] == bookList[index].imgUrl) {
+      for (var ds in snapshot.docs) {
+        if (ds.data()['imgUrl'] == bookList[index].imgUrl) {
           wishlistNotifier.value = Document.present;
           break;
         } else {
@@ -133,7 +133,7 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
       } else {
         firestore
             .collection(UsersCollection)
-            .document(user.uid)
+            .doc(user.uid)
             .collection(WishListCollection)
             .add({
           'title': bookList[index].title,
@@ -157,21 +157,21 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
   }
 
   Future<Null> _addToReadingList(
-      {Firestore firestore,
+      {FirebaseFirestore firestore,
       TextStyle style,
       int index,
       List<Book> bookList,
       BuildContext context,
       ValueNotifier readingNotifier}) async {
-    var user = await FirebaseAuth.instance.currentUser();
+    var user = FirebaseAuth.instance.currentUser;
     return await firestore
         .collection(UsersCollection)
-        .document(user.uid)
+        .doc(user.uid)
         .collection(ReadingCollection)
-        .getDocuments()
+        .get()
         .then((snapshot) {
-      for (var ds in snapshot.documents) {
-        if (ds.data['imgUrl'] == bookList[index].imgUrl) {
+      for (var ds in snapshot.docs) {
+        if (ds.data()['imgUrl'] == bookList[index].imgUrl) {
           readingNotifier.value = Document.present;
           break;
         } else {
@@ -190,7 +190,7 @@ class _SeeAllBooksPageState extends State<SeeAllBooksPage>
       } else {
         firestore
             .collection(UsersCollection)
-            .document(user.uid)
+            .doc(user.uid)
             .collection(ReadingCollection)
             .add({
           'title': bookList[index].title,

@@ -22,7 +22,7 @@ class BookPageBottomButtons extends StatelessWidget {
         ValueNotifier<Document>(Document.absent);
     ValueNotifier<Document> _readingNotifier =
         ValueNotifier<Document>(Document.absent);
-    Firestore _firestore = Firestore.instance;
+    FirebaseFirestore _firestore = FirebaseFirestore.instance;
     return fromLibrary
         ? Container()
         : AnimatedBuilder(
@@ -107,20 +107,20 @@ class BookPageBottomButtons extends StatelessWidget {
   }
 
   Future<Null> _addToWishList(
-      {Firestore firestore,
+      {FirebaseFirestore firestore,
       TextStyle style,
       int index,
       BuildContext context,
       ValueNotifier wishlistNotifier}) async {
-    var user = await FirebaseAuth.instance.currentUser();
+    var user = FirebaseAuth.instance.currentUser;
     return await firestore
         .collection(UsersCollection)
-        .document(user.uid)
+        .doc(user.uid)
         .collection(WishListCollection)
-        .getDocuments()
+        .get()
         .then((snapshot) {
-      for (var ds in snapshot.documents) {
-        if (ds.data['imgUrl'] == bookList[index].imgUrl) {
+      for (var ds in snapshot.docs) {
+        if (ds.data()['imgUrl'] == bookList[index].imgUrl) {
           wishlistNotifier.value = Document.present;
           break;
         } else {
@@ -139,7 +139,7 @@ class BookPageBottomButtons extends StatelessWidget {
       } else {
         firestore
             .collection(UsersCollection)
-            .document(user.uid)
+            .doc(user.uid)
             .collection(WishListCollection)
             .add({
           'title': bookList[index].title,
@@ -167,20 +167,20 @@ class BookPageBottomButtons extends StatelessWidget {
   }
 
   Future<Null> _addToReadingList(
-      {Firestore firestore,
+      {FirebaseFirestore firestore,
       TextStyle style,
       int index,
       BuildContext context,
       ValueNotifier readingNotifier}) async {
-    var user = await FirebaseAuth.instance.currentUser();
+    var user = FirebaseAuth.instance.currentUser;
     return await firestore
         .collection(UsersCollection)
-        .document(user.uid)
+        .doc(user.uid)
         .collection(ReadingCollection)
-        .getDocuments()
+        .get()
         .then((snapshot) {
-      for (var ds in snapshot.documents) {
-        if (ds.data['imgUrl'] == bookList[index].imgUrl) {
+      for (var ds in snapshot.docs) {
+        if (ds.data()['imgUrl'] == bookList[index].imgUrl) {
           readingNotifier.value = Document.present;
           break;
         } else {
@@ -199,7 +199,7 @@ class BookPageBottomButtons extends StatelessWidget {
       } else {
         firestore
             .collection(UsersCollection)
-            .document(user.uid)
+            .doc(user.uid)
             .collection(ReadingCollection)
             .add({
           'title': bookList[index].title,
